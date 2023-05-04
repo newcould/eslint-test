@@ -1,10 +1,10 @@
-import styled from "@emotion/styled";
-import { useCallback, useEffect, useState } from "react";
-import { FormattedMessage } from "react-intl";
-import { Link, useNavigate } from "react-router-dom";
-import { useAppContext } from "../../core/context";
-import { useAppDispatch } from "../../store";
-import { toggleSidebar } from "../../store/sidebar";
+import styled from '@emotion/styled';
+import {useCallback, useEffect, useState} from 'react';
+import {FormattedMessage} from 'react-intl';
+import {Link, useNavigate} from 'react-router-dom';
+import {useAppContext} from '../../core/context';
+import {useAppDispatch} from '../../store';
+import {toggleSidebar} from '../../store/sidebar';
 import {
   ActionIcon,
   Button,
@@ -12,9 +12,9 @@ import {
   Menu,
   TextInput,
   Textarea,
-} from "@mantine/core";
-import { useModals } from "@mantine/modals";
-import { backend } from "../../core/backend";
+} from '@mantine/core';
+import {useModals} from '@mantine/modals';
+import {backend} from '../../core/backend';
 
 const Container = styled.div`
   margin: calc(1.618rem - 1rem);
@@ -78,7 +78,7 @@ const ChatListItemLink = styled(Link)`
   }
 `;
 
-function ChatListItem(props: { chat: any; onClick: any; selected: boolean }) {
+function ChatListItem(props: {chat: any; onClick: any; selected: boolean}) {
   const c = props.chat;
   const context = useAppContext();
   const modals = useModals();
@@ -90,37 +90,37 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean }) {
       e?.stopPropagation();
 
       modals.openConfirmModal({
-        title: "Are you sure you want to delete this chat?",
+        title: 'Are you sure you want to delete this chat?',
         children: (
-          <p style={{ lineHeight: 1.7 }}>
+          <p style={{lineHeight: 1.7}}>
             The chat "{c.title}" will be permanently deleted. This cannot be
             undone.
           </p>
         ),
         labels: {
-          confirm: "Delete permanently",
-          cancel: "Cancel",
+          confirm: 'Delete permanently',
+          cancel: 'Cancel',
         },
         confirmProps: {
-          color: "red",
+          color: 'red',
         },
         onConfirm: async () => {
           try {
             await backend.current?.deleteChat(c.chatID);
             context.chat.deleteChat(c.chatID);
-            navigate("/");
+            navigate('/');
           } catch (e) {
             console.error(e);
             modals.openConfirmModal({
-              title: "Something went wrong",
+              title: 'Something went wrong',
               children: (
-                <p style={{ lineHeight: 1.7 }}>
+                <p style={{lineHeight: 1.7}}>
                   The chat "{c.title}" could not be deleted.
                 </p>
               ),
               labels: {
-                confirm: "Try again",
-                cancel: "Cancel",
+                confirm: 'Try again',
+                cancel: 'Cancel',
               },
               onConfirm: () => onDelete(),
             });
@@ -128,7 +128,7 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean }) {
         },
       });
     },
-    [c.chatID, c.title]
+    [c.chatID, c.title],
   );
 
   const onRename = useCallback(
@@ -138,7 +138,7 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean }) {
 
       // Display a modal with a TextInput
       modals.openModal({
-        title: "Rename chat",
+        title: 'Rename chat',
         children: (
           <div>
             <Textarea
@@ -151,10 +151,10 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean }) {
             <Button
               fullWidth
               variant="light"
-              style={{ marginTop: "1rem" }}
+              style={{marginTop: '1rem'}}
               onClick={() => {
                 const title = document
-                  .querySelector<HTMLInputElement>("#chat-title")
+                  .querySelector<HTMLInputElement>('#chat-title')
                   ?.value?.trim();
                 const ychat = context.chat.doc.getYChat(c.chatID);
                 if (ychat && title && title !== ychat?.title) {
@@ -169,7 +169,7 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean }) {
         ),
       });
     },
-    [c.chatID, c.title]
+    [c.chatID, c.title],
   );
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -177,20 +177,20 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean }) {
   const toggleMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setMenuOpen((open) => !open);
+    setMenuOpen(open => !open);
   }, []);
 
   return (
     <ChatListItemLink
-      to={"/chat/" + c.chatID}
+      to={'/chat/' + c.chatID}
       onClick={props.onClick}
       data-chat-id={c.chatID}
-      className={props.selected ? "selected" : ""}
+      className={props.selected ? 'selected' : ''}
     >
       <strong>
         {c.title || (
           <FormattedMessage
-            defaultMessage={"Untitled"}
+            defaultMessage={'Untitled'}
             description="default title for untitled chat sessions"
           />
         )}
@@ -208,7 +208,7 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean }) {
         </Menu.Target>
         <Menu.Dropdown>
           <Menu.Item onClick={onRename} icon={<i className="fa fa-edit" />}>
-            <FormattedMessage defaultMessage={"Rename this chat"} />
+            <FormattedMessage defaultMessage={'Rename this chat'} />
           </Menu.Item>
           <Menu.Divider />
           <Menu.Item
@@ -216,7 +216,7 @@ function ChatListItem(props: { chat: any; onClick: any; selected: boolean }) {
             color="red"
             icon={<i className="fa fa-trash" />}
           >
-            <FormattedMessage defaultMessage={"Delete this chat"} />
+            <FormattedMessage defaultMessage={'Delete this chat'} />
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
@@ -229,21 +229,21 @@ export default function RecentChats(props: any) {
   const dispatch = useAppDispatch();
 
   const currentChatID = context.currentChat.chat?.id;
-  const recentChats = context.chat.searchChats("");
+  const recentChats = context.chat.searchChats('');
 
   const onClick = useCallback(
     (e: React.MouseEvent) => {
-      if (e.currentTarget.closest("button")) {
+      if (e.currentTarget.closest('button')) {
         e.preventDefault();
         e.stopPropagation();
         return;
       }
 
-      if (window.matchMedia("(max-width: 40em)").matches) {
+      if (window.matchMedia('(max-width: 40em)').matches) {
         dispatch(toggleSidebar());
       }
     },
-    [dispatch]
+    [dispatch],
   );
 
   useEffect(() => {
@@ -261,7 +261,7 @@ export default function RecentChats(props: any) {
     <Container>
       {recentChats.length > 0 && (
         <ChatList>
-          {recentChats.map((c) => (
+          {recentChats.map(c => (
             <ChatListItem
               key={c.chatID}
               chat={c}
@@ -279,7 +279,7 @@ export default function RecentChats(props: any) {
       {recentChats.length === 0 && synced && (
         <Empty>
           <FormattedMessage
-            defaultMessage={"No chats yet."}
+            defaultMessage={'No chats yet.'}
             description="Message shown on the Chat History screen for new users who haven't started their first chat session"
           />
         </Empty>

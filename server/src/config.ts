@@ -1,8 +1,8 @@
-import crypto from "crypto";
-import fs from "fs";
-import path from "path";
-import { parse } from "yaml";
-import type { Knex } from "knex";
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
+import {parse} from 'yaml';
+import type {Knex} from 'knex';
 
 /**
  * The Config interface represents the configuration settings for various components
@@ -85,11 +85,11 @@ export interface Config {
 
 // default config:
 let config: Config = {
-  authSecret: crypto.randomBytes(32).toString("hex"),
+  authSecret: crypto.randomBytes(32).toString('hex'),
   database: {
-    client: "sqlite3",
+    client: 'sqlite3',
     connection: {
-      filename: "./data/chat.sqlite",
+      filename: './data/chat.sqlite',
     },
     useNullAsDefault: true,
   },
@@ -100,18 +100,18 @@ let config: Config = {
   },
 };
 
-if (!fs.existsSync("./data")) {
-  fs.mkdirSync("./data");
+if (!fs.existsSync('./data')) {
+  fs.mkdirSync('./data');
 }
 
 let filename = process.env.CHATWITHGPT_CONFIG_FILENAME as string;
 
 // assume config.yaml if no filename is provided:
 if (!filename) {
-  filename = path.resolve(__dirname, "../data/config.yaml");
+  filename = path.resolve(__dirname, '../data/config.yaml');
 
   // try config.yml if config.yaml doesn't exist:
-  const fallbackFilename = path.resolve(__dirname, "../data/config.yml");
+  const fallbackFilename = path.resolve(__dirname, '../data/config.yml');
   if (!fs.existsSync(filename) && fs.existsSync(fallbackFilename)) {
     filename = fallbackFilename;
   }
@@ -122,7 +122,7 @@ if (fs.existsSync(filename)) {
     ...config,
     ...parse(fs.readFileSync(filename).toString()),
   };
-  console.log("Loaded config from:", filename);
+  console.log('Loaded config from:', filename);
 }
 
 if (process.env.AUTH_SECRET) {
@@ -136,7 +136,7 @@ if (process.env.RATE_LIMIT_MAX) {
   config.rateLimit.max = parseInt(process.env.RATE_LIMIT_MAX, 10);
 }
 
-if (process.argv.includes("--self-signed")) {
+if (process.argv.includes('--self-signed')) {
   config.tls = {
     selfSigned: true,
   };
@@ -144,7 +144,7 @@ if (process.argv.includes("--self-signed")) {
 
 if (config.publicSiteURL) {
   // remove trailing slash:
-  config.publicSiteURL = config.publicSiteURL.replace(/\/$/, "");
+  config.publicSiteURL = config.publicSiteURL.replace(/\/$/, '');
 }
 
-export { config };
+export {config};

@@ -1,6 +1,6 @@
-import { S3, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
-import type { Readable } from "stream";
-import ObjectStore from "./index";
+import {S3, PutObjectCommand, GetObjectCommand} from '@aws-sdk/client-s3';
+import type {Readable} from 'stream';
+import ObjectStore from './index';
 
 const bucket = process.env.S3_BUCKET;
 
@@ -24,7 +24,7 @@ export default class S3ObjectStore extends ObjectStore {
       Key: key,
       Body: value,
       ContentType: contentType,
-      StorageClass: "INTELLIGENT_TIERING",
+      StorageClass: 'INTELLIGENT_TIERING',
     };
     await s3.send(new PutObjectCommand(params));
   }
@@ -35,5 +35,5 @@ async function readStream(stream: Readable) {
   for await (const chunk of stream) {
     chunks.push(chunk);
   }
-  return Buffer.concat(chunks).toString("utf8");
+  return Buffer.concat(chunks).toString('utf8');
 }

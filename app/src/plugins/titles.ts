@@ -1,8 +1,8 @@
-import Plugin from "../core/plugins";
-import { PluginDescription } from "../core/plugins/plugin-description";
-import { OpenAIMessage, Parameters } from "../core/chat/types";
-import { countTokens, runChatTrimmer } from "../core/tokenizer/wrapper";
-import { defaultModel } from "../core/chat/openai";
+import Plugin from '../core/plugins';
+import {PluginDescription} from '../core/plugins/plugin-description';
+import {OpenAIMessage, Parameters} from '../core/chat/types';
+import {countTokens, runChatTrimmer} from '../core/tokenizer/wrapper';
+import {defaultModel} from '../core/chat/openai';
 
 export const systemPrompt = `
 Please read the following exchange and write a short, concise title describing the topic (in the user's language).
@@ -18,16 +18,16 @@ export interface TitlePluginOptions {}
 const userPrompt = (messages: OpenAIMessage[]) => {
   return (
     messages
-      .map((m) => `${m.role.toLocaleUpperCase()}:\n${m.content}`)
-      .join("\n===\n") + "\n===\nTitle:"
+      .map(m => `${m.role.toLocaleUpperCase()}:\n${m.content}`)
+      .join('\n===\n') + '\n===\nTitle:'
   );
 };
 
 export class TitlePlugin extends Plugin<TitlePluginOptions> {
   describe(): PluginDescription {
     return {
-      id: "titles",
-      name: "Title Generator",
+      id: 'titles',
+      name: 'Title Generator',
       options: [],
     };
   }
@@ -36,13 +36,13 @@ export class TitlePlugin extends Plugin<TitlePluginOptions> {
     message: OpenAIMessage,
     contextMessages: OpenAIMessage[],
     parameters: Parameters,
-    done: boolean
+    done: boolean,
   ): Promise<OpenAIMessage> {
     if (done && !this.context?.getCurrentChat().title) {
       (async () => {
         let messages = [
           ...contextMessages.filter(
-            (m) => m.role === "user" || m.role === "assistant"
+            m => m.role === 'user' || m.role === 'assistant',
           ),
           message,
         ];
@@ -57,12 +57,12 @@ export class TitlePlugin extends Plugin<TitlePluginOptions> {
 
         messages = [
           {
-            role: "system",
+            role: 'system',
             content:
               tokens.length > 512 ? systemPromptForLongExchanges : systemPrompt,
           },
           {
-            role: "user",
+            role: 'user',
             content: userPrompt(messages),
           },
         ];
@@ -72,7 +72,7 @@ export class TitlePlugin extends Plugin<TitlePluginOptions> {
           temperature: 0,
         });
 
-        if (!output || output === "N/A") {
+        if (!output || output === 'N/A') {
           return;
         }
 

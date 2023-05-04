@@ -1,12 +1,12 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from ".";
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import type {RootState} from '.';
 
 const initialState = {
-  message: "",
+  message: '',
 };
 
 export const messageSlice = createSlice({
-  name: "message",
+  name: 'message',
   initialState,
   reducers: {
     setMessage: (state, action: PayloadAction<string>) => {
@@ -15,7 +15,7 @@ export const messageSlice = createSlice({
   },
 });
 
-export const { setMessage } = messageSlice.actions;
+export const {setMessage} = messageSlice.actions;
 
 export const selectMessage = (state: RootState) => state.message.message;
 

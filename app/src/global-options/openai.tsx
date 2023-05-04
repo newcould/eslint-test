@@ -1,18 +1,18 @@
-import { FormattedMessage } from "react-intl";
-import { OptionGroup } from "../core/options/option-group";
+import {FormattedMessage} from 'react-intl';
+import {OptionGroup} from '../core/options/option-group';
 
 export const openAIOptions: OptionGroup = {
-  id: "openai",
+  id: 'openai',
   options: [
     {
-      id: "apiKey",
-      defaultValue: "",
-      displayOnSettingsScreen: "user",
+      id: 'apiKey',
+      defaultValue: '',
+      displayOnSettingsScreen: 'user',
       displayAsSeparateSection: true,
       renderProps: () => ({
-        type: "password",
-        label: "Your OpenAI API Key",
-        placeholder: "sk-************************************************",
+        type: 'password',
+        label: 'Your OpenAI API Key',
+        placeholder: 'sk-************************************************',
         description: (
           <>
             <p>

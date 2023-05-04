@@ -1,6 +1,6 @@
-import { OpenAIMessage, Parameters } from "../chat/types";
-import { PluginContext } from "./plugin-context";
-import { PluginDescription } from "./plugin-description";
+import {OpenAIMessage, Parameters} from '../chat/types';
+import {PluginContext} from './plugin-context';
+import {PluginDescription} from './plugin-description';
 
 export default class Plugin<T = any> {
   constructor(public context?: PluginContext) {}
@@ -8,7 +8,7 @@ export default class Plugin<T = any> {
   async initialize() {}
 
   describe(): PluginDescription {
-    throw new Error("not implemented");
+    throw new Error('not implemented');
   }
 
   get options(): T | undefined {
@@ -17,19 +17,19 @@ export default class Plugin<T = any> {
 
   async preprocessModelInput(
     messages: OpenAIMessage[],
-    parameters: Parameters
+    parameters: Parameters,
   ): Promise<{
     messages: OpenAIMessage[];
     parameters: Parameters;
   }> {
-    return { messages, parameters };
+    return {messages, parameters};
   }
 
   async postprocessModelOutput(
     message: OpenAIMessage,
     context: OpenAIMessage[],
     parameters: Parameters,
-    done: boolean
+    done: boolean,
   ): Promise<OpenAIMessage> {
     return message;
   }

@@ -1,7 +1,7 @@
-import DirectTTSPlugin from "./direct-tts-plugin";
-import { AsyncLoop } from "../utils/async-loop";
-import { AbstractTTSPlayer } from "./types";
-import WebSpeechPlugin from "../../tts-plugins/web-speech";
+import DirectTTSPlugin from './direct-tts-plugin';
+import {AsyncLoop} from '../utils/async-loop';
+import {AbstractTTSPlayer} from './types';
+import WebSpeechPlugin from '../../tts-plugins/web-speech';
 
 export default class DirectTTSPlayer extends AbstractTTSPlayer {
   playing = false;
@@ -15,9 +15,9 @@ export default class DirectTTSPlayer extends AbstractTTSPlayer {
 
   constructor(private plugin: WebSpeechPlugin) {
     super();
-    console.log("tts init, directttsplayer");
+    console.log('tts init, directttsplayer');
 
-    this.emit("state", this.getState());
+    this.emit('state', this.getState());
 
     this.loop = new AsyncLoop(() => this.tick(), 100);
     this.loop.start();
@@ -36,22 +36,22 @@ export default class DirectTTSPlayer extends AbstractTTSPlayer {
     if (this.currentPlaybackIndex >= sentences.length) {
       if (this.complete) {
         console.log(
-          `tts finished 1, current index: ${this.currentPlaybackIndex}, sentences length: ${sentences.length}`
+          `tts finished 1, current index: ${this.currentPlaybackIndex}, sentences length: ${sentences.length}`,
         );
         try {
           await Promise.all(this.promises);
         } catch (e) {
-          console.error("an error occured while reading text aloud", e);
+          console.error('an error occured while reading text aloud', e);
         }
         console.log(
-          `tts finished 2, current index: ${this.currentPlaybackIndex}, sentences length: ${sentences.length}`
+          `tts finished 2, current index: ${this.currentPlaybackIndex}, sentences length: ${sentences.length}`,
         );
         this.playing = false;
         this.ended = true;
         this.currentIndex = 0;
         this.currentPlaybackIndex = 0;
         this.promises = [];
-        this.emit("state", this.getState());
+        this.emit('state', this.getState());
         return;
       }
     }
@@ -63,7 +63,7 @@ export default class DirectTTSPlayer extends AbstractTTSPlayer {
     this.ended = false;
 
     try {
-      this.emit("state", this.getState());
+      this.emit('state', this.getState());
       const text = sentences[this.currentIndex];
       console.log(`tts speaking`, text);
       const p = this.plugin.speak(text);
@@ -73,7 +73,7 @@ export default class DirectTTSPlayer extends AbstractTTSPlayer {
       this.promises.push(p);
       this.currentIndex += 1;
     } catch (e) {
-      console.error("an error occured while reading text aloud", e);
+      console.error('an error occured while reading text aloud', e);
     }
   }
 
@@ -86,20 +86,20 @@ export default class DirectTTSPlayer extends AbstractTTSPlayer {
     this.playing = true;
     this.ended = false;
 
-    if (typeof index === "number") {
+    if (typeof index === 'number') {
       this.currentIndex = index;
       this.currentPlaybackIndex = index;
     }
 
     await this.plugin.resume();
 
-    this.emit("state", this.getState());
+    this.emit('state', this.getState());
   }
 
   async pause(): Promise<any> {
     await this.plugin.pause();
     this.playing = false;
-    this.emit("state", this.getState());
+    this.emit('state', this.getState());
   }
 
   getState() {

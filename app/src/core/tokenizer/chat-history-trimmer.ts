@@ -1,5 +1,5 @@
-import { OpenAIMessage } from "../chat/types";
-import * as tokenizer from ".";
+import {OpenAIMessage} from '../chat/types';
+import * as tokenizer from '.';
 
 export interface ChatHistoryTrimmerOptions {
   maxTokens: number;
@@ -13,18 +13,18 @@ export class ChatHistoryTrimmer {
 
   constructor(
     private messages: OpenAIMessage[],
-    private readonly options: ChatHistoryTrimmerOptions
+    private readonly options: ChatHistoryTrimmerOptions,
   ) {}
 
   private countExcessTokens() {
     return Math.max(
       0,
-      tokenizer.countTokensForMessages(this.output) - this.options.maxTokens
+      tokenizer.countTokensForMessages(this.output) - this.options.maxTokens,
     );
   }
 
   public process() {
-    this.output = this.messages.map((m) => ({ ...m }));
+    this.output = this.messages.map(m => ({...m}));
 
     if (this.options.nMostRecentMessages) {
       this.output = this.removeUnwantedMessagesStrategy();
@@ -50,8 +50,8 @@ export class ChatHistoryTrimmer {
       return this.output;
     }
 
-    const systemPrompt = this.messages.find((m) => m.role === "system");
-    const firstUserMessage = this.messages.find((m) => m.role === "user");
+    const systemPrompt = this.messages.find(m => m.role === 'system');
+    const firstUserMessage = this.messages.find(m => m.role === 'user');
     const last = this.messages[this.messages.length - 1];
 
     this.output = [tokenizer.truncateMessage(systemPrompt!, 100)];
@@ -60,13 +60,13 @@ export class ChatHistoryTrimmer {
       this.output.push(
         tokenizer.truncateMessage(
           firstUserMessage,
-          this.options.maxTokens - 100
-        )
+          this.options.maxTokens - 100,
+        ),
       );
     } else {
       this.output.push(tokenizer.truncateMessage(firstUserMessage!, 100));
       this.output.push(
-        tokenizer.truncateMessage(last, this.options.maxTokens - 200)
+        tokenizer.truncateMessage(last, this.options.maxTokens - 200),
       );
     }
 
@@ -81,11 +81,9 @@ export class ChatHistoryTrimmer {
   }
 
   private removeUnwantedMessagesStrategy() {
-    const systemPromptIndex = this.messages.findIndex(
-      (m) => m.role === "system"
-    );
+    const systemPromptIndex = this.messages.findIndex(m => m.role === 'system');
     const firstUserMessageIndex = this.messages.findIndex(
-      (m) => m.role === "user"
+      m => m.role === 'user',
     );
     const keepFromIndex =
       this.messages.length - (this.options.nMostRecentMessages || 1);
@@ -109,11 +107,9 @@ export class ChatHistoryTrimmer {
   }
 
   private removeMessagesStrategy() {
-    const systemPromptIndex = this.messages.findIndex(
-      (m) => m.role === "system"
-    );
+    const systemPromptIndex = this.messages.findIndex(m => m.role === 'system');
     const firstUserMessageIndex = this.messages.findIndex(
-      (m) => m.role === "user"
+      m => m.role === 'user',
     );
     const lastMessageIndex = this.messages.length - 1;
 
@@ -137,17 +133,15 @@ export class ChatHistoryTrimmer {
       ) {
         continue;
       }
-      output[i].content = "";
+      output[i].content = '';
     }
 
-    return output.filter((m) => m.content.length > 0);
+    return output.filter(m => m.content.length > 0);
   }
 
   private trimMessagesStrategy(excessTokens: number) {
-    const systemPromptIndex = this.output.findIndex((m) => m.role === "system");
-    const firstUserMessageIndex = this.output.findIndex(
-      (m) => m.role === "user"
-    );
+    const systemPromptIndex = this.output.findIndex(m => m.role === 'system');
+    const firstUserMessageIndex = this.output.findIndex(m => m.role === 'user');
     const lastMessageIndex = this.output.length - 1;
 
     const output: OpenAIMessage[] = [...this.output];
@@ -173,6 +167,6 @@ export class ChatHistoryTrimmer {
       }
       output[i] = tokenizer.truncateMessage(output[i], truncateLength);
     }
-    return output.filter((m) => m.content.length > 0);
+    return output.filter(m => m.content.length > 0);
   }
 }

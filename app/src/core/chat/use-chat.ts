@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
-import { backend } from "../backend";
-import { ChatManager } from "..";
-import { Chat, Message } from "./types";
+import {useCallback, useEffect, useState} from 'react';
+import {backend} from '../backend';
+import {ChatManager} from '..';
+import {Chat, Message} from './types';
 
 export interface UseChatResult {
   chat: Chat | null | undefined;
@@ -14,7 +14,7 @@ export interface UseChatResult {
 export function useChat(
   chatManager: ChatManager,
   id: string | undefined | null,
-  share = false
+  share = false,
 ): UseChatResult {
   const [chat, setChat] = useState<Chat | null | undefined>(null);
   const [_, setVersion] = useState(0); // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -28,14 +28,14 @@ export function useChat(
         const c = chatManager.get(id);
         if (c) {
           setChat(c);
-          setVersion((v) => v + 1);
+          setVersion(v => v + 1);
           return;
         }
       } else {
         const c = await backend.current?.getSharedChat(id);
         if (c) {
           setChat(c);
-          setVersion((v) => v + 1);
+          setVersion(v => v + 1);
           return;
         }
       }
@@ -68,7 +68,7 @@ export function useChat(
   if (leaf) {
     messages = chat?.messages.getMessageChainTo(leaf?.id) || [];
     messagesToDisplay =
-      messages.filter((m) => ["user", "assistant"].includes(m.role)) || [];
+      messages.filter(m => ['user', 'assistant'].includes(m.role)) || [];
   }
 
   return {

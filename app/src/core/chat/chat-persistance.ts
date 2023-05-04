@@ -1,11 +1,11 @@
-import * as idb from "../utils/idb";
-import * as Y from "yjs";
-import { MessageTree } from "./message-tree";
-import { Chat } from "./types";
-import { YChatDoc } from "./y-chat";
+import * as idb from '../utils/idb';
+import * as Y from 'yjs';
+import {MessageTree} from './message-tree';
+import {Chat} from './types';
+import {YChatDoc} from './y-chat';
 
 export async function loadFromPreviousVersion(doc: YChatDoc) {
-  const serialized = await idb.get("chats");
+  const serialized = await idb.get('chats');
   if (serialized) {
     for (const chat of serialized) {
       try {
@@ -42,14 +42,14 @@ export function importChat(doc: YChatDoc, chat: Chat) {
       }
     }
   } else if (chat.title) {
-    if (!ychat.importedMetadata.has("title")) {
-      ychat.importedMetadata.set("title", chat.title);
+    if (!ychat.importedMetadata.has('title')) {
+      ychat.importedMetadata.set('title', chat.title);
     }
   }
 
   if (chat.pluginOptions) {
     for (const key of Object.keys(chat.pluginOptions)) {
-      const [pluginID, option] = key.split(".", 2);
+      const [pluginID, option] = key.split('.', 2);
       if (!ychat.pluginOptions.has(key)) {
         ychat.setOption(pluginID, option, chat.pluginOptions[key]);
       }
@@ -66,7 +66,7 @@ export function importChat(doc: YChatDoc, chat: Chat) {
       continue;
     }
     ychat.messages.set(message.id, message);
-    ychat.content.set(message.id, new Y.Text(message.content || ""));
+    ychat.content.set(message.id, new Y.Text(message.content || ''));
     if (message.done) {
       ychat.done.set(message.id, message.done);
     }

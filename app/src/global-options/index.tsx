@@ -1,11 +1,11 @@
-import { pluginMetadata } from "../core/plugins/metadata";
-import { Option } from "../core/options/option";
-import { OptionGroup } from "../core/options/option-group";
-import { openAIOptions } from "./openai";
-import { parameterOptions } from "./parameters";
-import { ttsServiceOptions } from "./tts-service";
-import { autoScrollOptions, inputOptions } from "./ui";
-import { whisperOptions } from "./whisper";
+import {pluginMetadata} from '../core/plugins/metadata';
+import {Option} from '../core/options/option';
+import {OptionGroup} from '../core/options/option-group';
+import {openAIOptions} from './openai';
+import {parameterOptions} from './parameters';
+import {ttsServiceOptions} from './tts-service';
+import {autoScrollOptions, inputOptions} from './ui';
+import {whisperOptions} from './whisper';
 
 export const globalOptions: OptionGroup[] = [
   openAIOptions,
@@ -17,16 +17,16 @@ export const globalOptions: OptionGroup[] = [
 ];
 
 const optionsForQuickSettings: Option[] = [];
-[...globalOptions, ...pluginMetadata].forEach((plugin) => {
-  plugin.options.forEach((option) => {
+[...globalOptions, ...pluginMetadata].forEach(plugin => {
+  plugin.options.forEach(option => {
     if (option.displayInQuickSettings) {
       optionsForQuickSettings.push({
-        id: plugin.id + "--" + option.id,
+        id: plugin.id + '--' + option.id,
         defaultValue: !!option.displayInQuickSettings?.displayByDefault,
-        displayOnSettingsScreen: "ui",
+        displayOnSettingsScreen: 'ui',
         displayAsSeparateSection: false,
         renderProps: {
-          type: "checkbox",
+          type: 'checkbox',
           label: option.displayInQuickSettings?.name || option.id,
         },
       });
@@ -35,8 +35,8 @@ const optionsForQuickSettings: Option[] = [];
 });
 
 export const quickSettings: OptionGroup = {
-  id: "quick-settings",
-  name: "Quick Settings",
+  id: 'quick-settings',
+  name: 'Quick Settings',
   options: optionsForQuickSettings,
 };
 

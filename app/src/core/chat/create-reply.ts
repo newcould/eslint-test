@@ -1,17 +1,17 @@
-import EventEmitter from "events";
-import { createChatCompletion, createStreamingChatCompletion } from "./openai";
-import { PluginContext } from "../plugins/plugin-context";
-import { pluginRunner } from "../plugins/plugin-runner";
+import EventEmitter from 'events';
+import {createChatCompletion, createStreamingChatCompletion} from './openai';
+import {PluginContext} from '../plugins/plugin-context';
+import {pluginRunner} from '../plugins/plugin-runner';
 import {
   Chat,
   Message,
   OpenAIMessage,
   Parameters,
   getOpenAIMessageFromMessage,
-} from "./types";
-import { EventEmitterAsyncIterator } from "../utils/event-emitter-async-iterator";
-import { YChat } from "./y-chat";
-import { OptionsManager } from "../options";
+} from './types';
+import {EventEmitterAsyncIterator} from '../utils/event-emitter-async-iterator';
+import {YChat} from './y-chat';
+import {OptionsManager} from '../options';
 
 export class ReplyRequest extends EventEmitter {
   private mutatedMessages: OpenAIMessage[];
@@ -19,7 +19,7 @@ export class ReplyRequest extends EventEmitter {
   private lastChunkReceivedAt: number = 0;
   private timer: any;
   private done: boolean = false;
-  private content = "";
+  private content = '';
   private cancelSSE: any;
 
   constructor(
@@ -28,12 +28,12 @@ export class ReplyRequest extends EventEmitter {
     private messages: Message[],
     private replyID: string,
     private requestedParameters: Parameters,
-    private pluginOptions: OptionsManager
+    private pluginOptions: OptionsManager,
   ) {
     super();
     this.mutatedMessages = [...messages];
-    this.mutatedMessages = messages.map((m) => getOpenAIMessageFromMessage(m));
-    this.mutatedParameters = { ...requestedParameters };
+    this.mutatedMessages = messages.map(m => getOpenAIMessageFromMessage(m));
+    this.mutatedParameters = {...requestedParameters};
     delete this.mutatedParameters.apiKey;
   }
 
@@ -49,7 +49,7 @@ export class ReplyRequest extends EventEmitter {
 
       createChatCompletion: async (
         messages: OpenAIMessage[],
-        _parameters: Parameters
+        _parameters: Parameters,
       ) => {
         return await createChatCompletion(messages, {
           ..._parameters,
@@ -70,7 +70,7 @@ export class ReplyRequest extends EventEmitter {
     this.timer = setInterval(() => {
       const sinceLastChunk = Date.now() - this.lastChunkReceivedAt;
       if (sinceLastChunk > 30000 && !this.done) {
-        this.onError("no response from OpenAI in the last 30 seconds");
+        this.onError('no response from OpenAI in the last 30 seconds');
       }
     }, 2000);
   }
@@ -80,47 +80,47 @@ export class ReplyRequest extends EventEmitter {
       this.scheduleTimeout();
 
       await pluginRunner(
-        "preprocess-model-input",
+        'preprocess-model-input',
         this.pluginContext,
-        async (plugin) => {
+        async plugin => {
           const output = await plugin.preprocessModelInput(
             this.mutatedMessages,
-            this.mutatedParameters
+            this.mutatedParameters,
           );
           this.mutatedMessages = output.messages;
           this.mutatedParameters = output.parameters;
           this.lastChunkReceivedAt = Date.now();
-        }
+        },
       );
 
-      const { emitter, cancel } = await createStreamingChatCompletion(
+      const {emitter, cancel} = await createStreamingChatCompletion(
         this.mutatedMessages,
         {
           ...this.mutatedParameters,
           apiKey: this.requestedParameters.apiKey,
-        }
+        },
       );
       this.cancelSSE = cancel;
 
       const eventIterator = new EventEmitterAsyncIterator<string>(emitter, [
-        "data",
-        "done",
-        "error",
+        'data',
+        'done',
+        'error',
       ]);
 
       for await (const event of eventIterator) {
-        const { eventName, value } = event;
+        const {eventName, value} = event;
 
         switch (eventName) {
-          case "data":
+          case 'data':
             await this.onData(value);
             break;
 
-          case "done":
+          case 'done':
             await this.onDone();
             break;
 
-          case "error":
+          case 'error':
             if (!this.content || !this.done) {
               await this.onError(value);
             }
@@ -143,21 +143,21 @@ export class ReplyRequest extends EventEmitter {
     this.content = value;
 
     await pluginRunner(
-      "postprocess-model-output",
+      'postprocess-model-output',
       this.pluginContext,
-      async (plugin) => {
+      async plugin => {
         const output = await plugin.postprocessModelOutput(
           {
-            role: "assistant",
+            role: 'assistant',
             content: this.content,
           },
           this.mutatedMessages,
           this.mutatedParameters,
-          false
+          false,
         );
 
         this.content = output.content;
-      }
+      },
     );
 
     this.yChat.setPendingMessageContent(this.replyID, this.content);
@@ -170,26 +170,26 @@ export class ReplyRequest extends EventEmitter {
     clearInterval(this.timer);
     this.lastChunkReceivedAt = Date.now();
     this.done = true;
-    this.emit("done");
+    this.emit('done');
 
     this.yChat.onMessageDone(this.replyID);
 
     await pluginRunner(
-      "postprocess-model-output",
+      'postprocess-model-output',
       this.pluginContext,
-      async (plugin) => {
+      async plugin => {
         const output = await plugin.postprocessModelOutput(
           {
-            role: "assistant",
+            role: 'assistant',
             content: this.content,
           },
           this.mutatedMessages,
           this.mutatedParameters,
-          true
+          true,
         );
 
         this.content = output.content;
-      }
+      },
     );
 
     this.yChat.setMessageContent(this.replyID, this.content);
@@ -200,12 +200,12 @@ export class ReplyRequest extends EventEmitter {
       return;
     }
     this.done = true;
-    this.emit("done");
+    this.emit('done');
     clearInterval(this.timer);
     this.cancelSSE?.();
 
     this.content += `\n\nI'm sorry, I'm having trouble connecting to OpenAI (${
-      error || "no response from the API"
+      error || 'no response from the API'
     }). Please make sure you've entered your OpenAI API key correctly and try again.`;
     this.content = this.content.trim();
 
@@ -218,7 +218,7 @@ export class ReplyRequest extends EventEmitter {
     this.done = true;
     this.yChat.onMessageDone(this.replyID);
     this.cancelSSE?.();
-    this.emit("done");
+    this.emit('done');
   }
 
   // private setMessageContent(content: string) {

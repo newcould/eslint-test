@@ -1,8 +1,8 @@
-import { AbstractTTSPlayer, TTSPlayerState } from "./types";
-import { cloneArrayBuffer, md5, sleep } from "../utils";
-import { AsyncLoop } from "../utils/async-loop";
-import * as idb from "../utils/idb";
-import TTSPlugin from "./tts-plugin";
+import {AbstractTTSPlayer, TTSPlayerState} from './types';
+import {cloneArrayBuffer, md5, sleep} from '../utils';
+import {AsyncLoop} from '../utils/async-loop';
+import * as idb from '../utils/idb';
+import TTSPlugin from './tts-plugin';
 
 export let audioContext = new AudioContext();
 export let audioContextInUse = false;
@@ -106,14 +106,14 @@ export default class ExternalTTSAudioFilePlayer extends AbstractTTSPlayer {
     }
 
     const files = await Promise.all(
-      sentencesToDownload.map(async (sentenceIndex) => {
+      sentencesToDownload.map(async sentenceIndex => {
         try {
           const text = sentences[sentenceIndex];
           return await getAudioFile(this.plugin, text);
         } catch (e) {
-          console.warn("error downloading tts audio", e);
+          console.warn('error downloading tts audio', e);
         }
-      })
+      }),
     );
 
     for (let i = 0; i < sentencesToDownload.length; i++) {
@@ -126,7 +126,7 @@ export default class ExternalTTSAudioFilePlayer extends AbstractTTSPlayer {
       }
     }
 
-    this.emit("state", this.getState());
+    this.emit('state', this.getState());
   };
 
   private schedule = async () => {
@@ -135,7 +135,7 @@ export default class ExternalTTSAudioFilePlayer extends AbstractTTSPlayer {
     if (
       this.playing &&
       this.sourceNodes[this.currentSentenceIndex] &&
-      audioContext.state === "suspended"
+      audioContext.state === 'suspended'
     ) {
       try {
         await this.resumeAudioContext();
@@ -162,7 +162,7 @@ export default class ExternalTTSAudioFilePlayer extends AbstractTTSPlayer {
 
         if (!this.sourceNodes[i]) {
           const audioBuffer = await audioContext.decodeAudioData(
-            cloneArrayBuffer(audioArrayBuffer)
+            cloneArrayBuffer(audioArrayBuffer),
           );
           this.durations[i] = audioBuffer.duration;
 
@@ -207,10 +207,10 @@ export default class ExternalTTSAudioFilePlayer extends AbstractTTSPlayer {
               this.playing = false;
             }
 
-            this.emit("state", this.getState());
+            this.emit('state', this.getState());
           };
 
-          this.emit("state", this.getState());
+          this.emit('state', this.getState());
         }
 
         time += this.durations[i] + 0.25;
@@ -225,7 +225,7 @@ export default class ExternalTTSAudioFilePlayer extends AbstractTTSPlayer {
       audioContext.resume();
       await sleep(10);
     } catch (e) {
-      console.warn("error resuming audio context", e);
+      console.warn('error resuming audio context', e);
     }
   }
 
@@ -233,7 +233,7 @@ export default class ExternalTTSAudioFilePlayer extends AbstractTTSPlayer {
     try {
       await audioContext.suspend();
     } catch (e) {
-      console.warn("error suspending audio context", e);
+      console.warn('error suspending audio context', e);
     }
   }
 
@@ -257,13 +257,13 @@ export default class ExternalTTSAudioFilePlayer extends AbstractTTSPlayer {
   public async pause() {
     this.playing = false;
     await this.suspendAudioContext();
-    this.emit("state", this.getState());
+    this.emit('state', this.getState());
   }
 
   public async play(index?: number) {
     this.playing = true;
 
-    if (typeof index === "number") {
+    if (typeof index === 'number') {
       this.requestedSentenceIndex = index;
       this.currentSentenceIndex = index;
 
@@ -285,7 +285,7 @@ export default class ExternalTTSAudioFilePlayer extends AbstractTTSPlayer {
     } else {
       await this.play(Math.max(0, this.sourceNodes.length - 1));
     }
-    this.emit("state", this.getState());
+    this.emit('state', this.getState());
   }
 
   public destroy() {

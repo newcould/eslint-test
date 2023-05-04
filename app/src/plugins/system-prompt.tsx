@@ -1,7 +1,7 @@
-import { FormattedMessage } from "react-intl";
-import Plugin from "../core/plugins";
-import { PluginDescription } from "../core/plugins/plugin-description";
-import { OpenAIMessage, Parameters } from "../core/chat/types";
+import {FormattedMessage} from 'react-intl';
+import Plugin from '../core/plugins';
+import {PluginDescription} from '../core/plugins/plugin-description';
+import {OpenAIMessage, Parameters} from '../core/chat/types';
 
 export const defaultSystemPrompt = `
 You are ChatGPT, a large language model trained by OpenAI.
@@ -16,32 +16,32 @@ export interface SystemPromptPluginOptions {
 export class SystemPromptPlugin extends Plugin<SystemPromptPluginOptions> {
   describe(): PluginDescription {
     return {
-      id: "system-prompt",
-      name: "System Prompt",
+      id: 'system-prompt',
+      name: 'System Prompt',
       options: [
         {
-          id: "systemPrompt",
+          id: 'systemPrompt',
           defaultValue: defaultSystemPrompt,
-          displayOnSettingsScreen: "chat",
+          displayOnSettingsScreen: 'chat',
           resettable: true,
-          scope: "chat",
+          scope: 'chat',
           renderProps: {
-            type: "textarea",
+            type: 'textarea',
             description: (
               <p>
                 <FormattedMessage
                   defaultMessage={
                     "The System Prompt is an invisible message inserted at the start of the chat and can be used to give ChatGPT information about itself and general guidelines for how it should respond. The <code>'{{ datetime }}'</code> tag is automatically replaced by the current date and time (use this to give the AI access to the time)."
                   }
-                  values={{ code: (v) => <code>{v}</code> }}
+                  values={{code: v => <code>{v}</code>}}
                 />
               </p>
             ),
           },
           displayInQuickSettings: {
-            name: "System Prompt",
+            name: 'System Prompt',
             displayByDefault: true,
-            label: "Customize system prompt",
+            label: 'Customize system prompt',
           },
         },
       ],
@@ -50,14 +50,14 @@ export class SystemPromptPlugin extends Plugin<SystemPromptPluginOptions> {
 
   async preprocessModelInput(
     messages: OpenAIMessage[],
-    parameters: Parameters
-  ): Promise<{ messages: OpenAIMessage[]; parameters: Parameters }> {
+    parameters: Parameters,
+  ): Promise<{messages: OpenAIMessage[]; parameters: Parameters}> {
     const output = [
       {
-        role: "system",
+        role: 'system',
         content: (this.options?.systemPrompt || defaultSystemPrompt).replace(
-          "{{ datetime }}",
-          new Date().toLocaleString()
+          '{{ datetime }}',
+          new Date().toLocaleString(),
         ),
       },
       ...messages,

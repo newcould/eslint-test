@@ -1,22 +1,16 @@
-import React, {
-  useState,
-  useRef,
-  useMemo,
-  useEffect,
-  useCallback,
-} from "react";
-import { v4 as uuidv4 } from "uuid";
-import { IntlShape, useIntl } from "react-intl";
-import { Backend, User } from "./backend";
-import { ChatManager } from "./";
-import { useAppDispatch } from "../store";
-import { openOpenAIApiKeyPanel } from "../store/settings-ui";
-import { Message, Parameters } from "./chat/types";
-import { useChat, UseChatResult } from "./chat/use-chat";
-import { TTSContextProvider } from "./tts/use-tts";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { isProxySupported } from "./chat/openai";
-import { audioContext, resetAudioContext } from "./tts/audio-file-player";
+import React, {useState, useRef, useMemo, useEffect, useCallback} from 'react';
+import {v4 as uuidv4} from 'uuid';
+import {IntlShape, useIntl} from 'react-intl';
+import {Backend, User} from './backend';
+import {ChatManager} from './';
+import {useAppDispatch} from '../store';
+import {openOpenAIApiKeyPanel} from '../store/settings-ui';
+import {Message, Parameters} from './chat/types';
+import {useChat, UseChatResult} from './chat/use-chat';
+import {TTSContextProvider} from './tts/use-tts';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
+import {isProxySupported} from './chat/openai';
+import {audioContext, resetAudioContext} from './tts/audio-file-player';
 
 export interface Context {
   authenticated: boolean;
@@ -42,7 +36,7 @@ const backend = new Backend(chatManager);
 let intl: IntlShape;
 
 export function useCreateAppContext(): Context {
-  const { id: _id } = useParams();
+  const {id: _id} = useParams();
   const [nextID, setNextID] = useState(uuidv4());
   const id = _id ?? nextID;
 
@@ -50,20 +44,20 @@ export function useCreateAppContext(): Context {
 
   intl = useIntl();
 
-  const { pathname } = useLocation();
-  const isHome = pathname === "/";
-  const isShare = pathname.startsWith("/s/");
+  const {pathname} = useLocation();
+  const isHome = pathname === '/';
+  const isShare = pathname.startsWith('/s/');
 
   const currentChat = useChat(chatManager, id, isShare);
   const [authenticated, setAuthenticated] = useState(
-    backend?.isAuthenticated || false
+    backend?.isAuthenticated || false,
   );
   const [wasAuthenticated, setWasAuthenticated] = useState(
-    backend?.isAuthenticated || false
+    backend?.isAuthenticated || false,
   );
 
   useEffect(() => {
-    chatManager.on("y-update", (update) => backend?.receiveYUpdate(update));
+    chatManager.on('y-update', update => backend?.receiveYUpdate(update));
   }, []);
 
   const updateAuth = useCallback((authenticated: boolean) => {
@@ -73,15 +67,15 @@ export function useCreateAppContext(): Context {
     }
     if (authenticated) {
       setWasAuthenticated(true);
-      localStorage.setItem("registered", "true");
+      localStorage.setItem('registered', 'true');
     }
   }, []);
 
   useEffect(() => {
     updateAuth(backend?.isAuthenticated || false);
-    backend?.on("authenticated", updateAuth);
+    backend?.on('authenticated', updateAuth);
     return () => {
-      backend?.off("authenticated", updateAuth);
+      backend?.off('authenticated', updateAuth);
     };
   }, [updateAuth]);
 
@@ -99,8 +93,8 @@ export function useCreateAppContext(): Context {
 
       // const openaiApiKey = store.getState().apiKeys.openAIApiKey;
       const openaiApiKey = chatManager.options.getOption<string>(
-        "openai",
-        "apiKey"
+        'openai',
+        'apiKey',
       );
 
       if (!openaiApiKey && !isProxySupported()) {
@@ -109,11 +103,11 @@ export function useCreateAppContext(): Context {
       }
 
       const parameters: Parameters = {
-        model: chatManager.options.getOption<string>("parameters", "model", id),
+        model: chatManager.options.getOption<string>('parameters', 'model', id),
         temperature: chatManager.options.getOption<number>(
-          "parameters",
-          "temperature",
-          id
+          'parameters',
+          'temperature',
+          id,
         ),
       };
 
@@ -121,17 +115,17 @@ export function useCreateAppContext(): Context {
         setNextID(uuidv4());
 
         const autoPlay = chatManager.options.getOption<boolean>(
-          "tts",
-          "autoplay"
+          'tts',
+          'autoplay',
         );
 
         if (autoPlay) {
           const ttsService = chatManager.options.getOption<string>(
-            "tts",
-            "service"
+            'tts',
+            'service',
           );
-          if (ttsService === "web-speech") {
-            const utterance = new SpeechSynthesisUtterance("Generating");
+          if (ttsService === 'web-speech') {
+            const utterance = new SpeechSynthesisUtterance('Generating');
             utterance.volume = 0;
             speechSynthesis.speak(utterance);
           }
@@ -164,7 +158,7 @@ export function useCreateAppContext(): Context {
 
       return id;
     },
-    [dispatch, id, currentChat.leaf, isShare]
+    [dispatch, id, currentChat.leaf, isShare],
   );
 
   const regenerateMessage = useCallback(
@@ -177,8 +171,8 @@ export function useCreateAppContext(): Context {
 
       // const openaiApiKey = store.getState().apiKeys.openAIApiKey;
       const openaiApiKey = chatManager.options.getOption<string>(
-        "openai",
-        "apiKey"
+        'openai',
+        'apiKey',
       );
 
       if (!openaiApiKey && !isProxySupported()) {
@@ -187,11 +181,11 @@ export function useCreateAppContext(): Context {
       }
 
       const parameters: Parameters = {
-        model: chatManager.options.getOption<string>("parameters", "model", id),
+        model: chatManager.options.getOption<string>('parameters', 'model', id),
         temperature: chatManager.options.getOption<number>(
-          "parameters",
-          "temperature",
-          id
+          'parameters',
+          'temperature',
+          id,
         ),
       };
 
@@ -202,7 +196,7 @@ export function useCreateAppContext(): Context {
 
       return true;
     },
-    [dispatch, isShare]
+    [dispatch, isShare],
   );
 
   const editMessage = useCallback(
@@ -219,8 +213,8 @@ export function useCreateAppContext(): Context {
 
       // const openaiApiKey = store.getState().apiKeys.openAIApiKey;
       const openaiApiKey = chatManager.options.getOption<string>(
-        "openai",
-        "apiKey"
+        'openai',
+        'apiKey',
       );
 
       if (!openaiApiKey && !isProxySupported()) {
@@ -229,11 +223,11 @@ export function useCreateAppContext(): Context {
       }
 
       const parameters: Parameters = {
-        model: chatManager.options.getOption<string>("parameters", "model", id),
+        model: chatManager.options.getOption<string>('parameters', 'model', id),
         temperature: chatManager.options.getOption<number>(
-          "parameters",
-          "temperature",
-          id
+          'parameters',
+          'temperature',
+          id,
         ),
       };
 
@@ -262,7 +256,7 @@ export function useCreateAppContext(): Context {
 
       return true;
     },
-    [dispatch, id, isShare]
+    [dispatch, id, isShare],
   );
 
   const generating =
@@ -299,7 +293,7 @@ export function useCreateAppContext(): Context {
       isHome,
       isShare,
       intl,
-    ]
+    ],
   );
 
   return context;
@@ -309,7 +303,7 @@ export function useAppContext() {
   return React.useContext(AppContext);
 }
 
-export function AppContextProvider(props: { children: React.ReactNode }) {
+export function AppContextProvider(props: {children: React.ReactNode}) {
   const context = useCreateAppContext();
   return (
     <AppContext.Provider value={context}>

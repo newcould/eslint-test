@@ -1,13 +1,13 @@
-import EventEmitter from "events";
-import { Configuration, OpenAIApi } from "openai";
-import SSE from "../utils/sse";
-import { OpenAIMessage, Parameters } from "./types";
-import { backend } from "../backend";
+import EventEmitter from 'events';
+import {Configuration, OpenAIApi} from 'openai';
+import SSE from '../utils/sse';
+import {OpenAIMessage, Parameters} from './types';
+import {backend} from '../backend';
 
-export const defaultModel = "gpt-3.5-turbo";
+export const defaultModel = 'gpt-3.5-turbo';
 
 export function isProxySupported() {
-  return !!backend.current?.services?.includes("openai");
+  return !!backend.current?.services?.includes('openai');
 }
 
 function shouldUseProxy(apiKey: string | undefined | null) {
@@ -15,7 +15,7 @@ function shouldUseProxy(apiKey: string | undefined | null) {
 }
 
 function getEndpoint(proxied = false) {
-  return proxied ? "/chatapi/proxies/openai" : "https://api.openai.com";
+  return proxied ? '/chatapi/proxies/openai' : 'https://api.openai.com';
 }
 
 export interface OpenAIResponseChunk {
@@ -32,9 +32,9 @@ export interface OpenAIResponseChunk {
 }
 
 function parseResponseChunk(buffer: any): OpenAIResponseChunk {
-  const chunk = buffer.toString().replace("data: ", "").trim();
+  const chunk = buffer.toString().replace('data: ', '').trim();
 
-  if (chunk === "[DONE]") {
+  if (chunk === '[DONE]') {
     return {
       done: true,
     };
@@ -52,21 +52,21 @@ function parseResponseChunk(buffer: any): OpenAIResponseChunk {
 
 export async function createChatCompletion(
   messages: OpenAIMessage[],
-  parameters: Parameters
+  parameters: Parameters,
 ): Promise<string> {
   const proxied = shouldUseProxy(parameters.apiKey);
   const endpoint = getEndpoint(proxied);
 
   if (!proxied && !parameters.apiKey) {
-    throw new Error("No API key provided");
+    throw new Error('No API key provided');
   }
 
-  const response = await fetch(endpoint + "/v1/chat/completions", {
-    method: "POST",
+  const response = await fetch(endpoint + '/v1/chat/completions', {
+    method: 'POST',
     headers: {
-      Accept: "application/json, text/plain, */*",
-      Authorization: !proxied ? `Bearer ${parameters.apiKey}` : "",
-      "Content-Type": "application/json",
+      Accept: 'application/json, text/plain, */*',
+      Authorization: !proxied ? `Bearer ${parameters.apiKey}` : '',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       model: parameters.model,
@@ -77,12 +77,12 @@ export async function createChatCompletion(
 
   const data = await response.json();
 
-  return data.choices[0].message?.content?.trim() || "";
+  return data.choices[0].message?.content?.trim() || '';
 }
 
 export async function createStreamingChatCompletion(
   messages: OpenAIMessage[],
-  parameters: Parameters
+  parameters: Parameters,
 ) {
   const emitter = new EventEmitter();
 
@@ -90,15 +90,15 @@ export async function createStreamingChatCompletion(
   const endpoint = getEndpoint(proxied);
 
   if (!proxied && !parameters.apiKey) {
-    throw new Error("No API key provided");
+    throw new Error('No API key provided');
   }
 
-  const eventSource = new SSE(endpoint + "/v1/chat/completions", {
-    method: "POST",
+  const eventSource = new SSE(endpoint + '/v1/chat/completions', {
+    method: 'POST',
     headers: {
-      Accept: "application/json, text/plain, */*",
-      Authorization: !proxied ? `Bearer ${parameters.apiKey}` : "",
-      "Content-Type": "application/json",
+      Accept: 'application/json, text/plain, */*',
+      Authorization: !proxied ? `Bearer ${parameters.apiKey}` : '',
+      'Content-Type': 'application/json',
     },
     payload: JSON.stringify({
       model: parameters.model,
@@ -108,29 +108,29 @@ export async function createStreamingChatCompletion(
     }),
   }) as SSE;
 
-  let contents = "";
+  let contents = '';
 
-  eventSource.addEventListener("error", (event: any) => {
+  eventSource.addEventListener('error', (event: any) => {
     if (!contents) {
       let error = event.data;
       try {
         error = JSON.parse(error).error.message;
       } catch (e) {}
-      emitter.emit("error", error);
+      emitter.emit('error', error);
     }
   });
 
-  eventSource.addEventListener("message", async (event: any) => {
-    if (event.data === "[DONE]") {
-      emitter.emit("done");
+  eventSource.addEventListener('message', async (event: any) => {
+    if (event.data === '[DONE]') {
+      emitter.emit('done');
       return;
     }
 
     try {
       const chunk = parseResponseChunk(event.data);
       if (chunk.choices && chunk.choices.length > 0) {
-        contents += chunk.choices[0]?.delta?.content || "";
-        emitter.emit("data", contents);
+        contents += chunk.choices[0]?.delta?.content || '';
+        emitter.emit('data', contents);
       }
     } catch (e) {
       console.error(e);
@@ -146,6 +146,6 @@ export async function createStreamingChatCompletion(
 }
 
 export const maxTokensByModel = {
-  "chatgpt-3.5-turbo": 2048,
-  "gpt-4": 8192,
+  'chatgpt-3.5-turbo': 2048,
+  'gpt-4': 8192,
 };

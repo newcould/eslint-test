@@ -1,5 +1,5 @@
-import EventEmitter from "events";
-import { split } from "sentence-splitter";
+import EventEmitter from 'events';
+import {split} from 'sentence-splitter';
 
 export interface TTSPlayerState {
   playing: boolean;
@@ -36,7 +36,7 @@ export abstract class AbstractTTSPlayer extends EventEmitter {
         output.push(sentence.raw.trim());
       }
     }
-    this.sentences = output.filter((s) => s.length > 0);
+    this.sentences = output.filter(s => s.length > 0);
   }
 }
 

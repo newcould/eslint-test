@@ -1,4 +1,4 @@
-import { sleep } from ".";
+import {sleep} from '.';
 
 /**
  * AsyncLoop class provides a mechanism to execute a given function

@@ -18,22 +18,22 @@ export default class SSE {
   // Connection settings
   private headers = this.options.headers || {};
   private payload =
-    this.options.payload !== undefined ? this.options.payload : "";
+    this.options.payload !== undefined ? this.options.payload : '';
   private method = this.options.method
     ? this.options.method
     : this.payload
-    ? "POST"
-    : "GET";
+    ? 'POST'
+    : 'GET';
   private withCredentials = !!this.options.withCredentials;
 
   // Internal properties
-  private FIELD_SEPARATOR = ":";
+  private FIELD_SEPARATOR = ':';
   private listeners: any = {};
 
   private xhr: any = null;
   private readyState = this.INITIALIZING;
   private progress = 0;
-  private chunk = "";
+  private chunk = '';
 
   public constructor(public url: string, public options: any) {}
 
@@ -44,11 +44,11 @@ export default class SSE {
     this.setReadyState(this.CONNECTING);
 
     this.xhr = new XMLHttpRequest();
-    this.xhr.addEventListener("progress", this.onStreamProgress);
-    this.xhr.addEventListener("load", this.onStreamLoaded);
-    this.xhr.addEventListener("readystatechange", this.checkStreamClosed);
-    this.xhr.addEventListener("error", this.onStreamFailure);
-    this.xhr.addEventListener("abort", this.onStreamAbort);
+    this.xhr.addEventListener('progress', this.onStreamProgress);
+    this.xhr.addEventListener('load', this.onStreamLoaded);
+    this.xhr.addEventListener('readystatechange', this.checkStreamClosed);
+    this.xhr.addEventListener('error', this.onStreamFailure);
+    this.xhr.addEventListener('abort', this.onStreamAbort);
     this.xhr.open(this.method, this.url);
     for (var header in this.headers) {
       this.xhr.setRequestHeader(header, this.headers[header]);
@@ -88,7 +88,7 @@ export default class SSE {
     }
 
     if (this.readyState === this.CONNECTING) {
-      this.dispatchEvent(new CustomEvent("open"));
+      this.dispatchEvent(new CustomEvent('open'));
       this.setReadyState(this.OPEN);
     }
 
@@ -97,7 +97,7 @@ export default class SSE {
     data.split(/(\r\n|\r|\n){2}/g).forEach((part: string) => {
       if (part.trim().length === 0) {
         this.dispatchEvent(this.parseEventChunk(this.chunk.trim()));
-        this.chunk = "";
+        this.chunk = '';
       } else {
         this.chunk += part;
       }
@@ -112,7 +112,7 @@ export default class SSE {
       return null;
     }
 
-    const e: any = { id: null, retry: null, data: "", event: "message" };
+    const e: any = {id: null, retry: null, data: '', event: 'message'};
     chunk.split(/\n|\r\n|\r/).forEach((line: string) => {
       line = line.trimRight();
       const index = line.indexOf(this.FIELD_SEPARATOR);
@@ -128,7 +128,7 @@ export default class SSE {
       }
 
       const value = line.substring(index + 1).trimLeft();
-      if (field === "data") {
+      if (field === 'data') {
         e[field] += value;
       } else {
         e[field] = value;
@@ -149,7 +149,7 @@ export default class SSE {
 
     // Parse the last chunk.
     this.dispatchEvent(this.parseEventChunk(this.chunk));
-    this.chunk = "";
+    this.chunk = '';
   };
 
   /**
@@ -196,7 +196,7 @@ export default class SSE {
 
     e.source = this;
 
-    const onHandler = "on" + e.type;
+    const onHandler = 'on' + e.type;
     if (this.hasOwnProperty(onHandler)) {
       // @ts-ignore
       this[onHandler].call(this, e);
@@ -219,7 +219,7 @@ export default class SSE {
    * Sets the ready state of the SSE connection and dispatches a 'readystatechange' event.
    */
   private setReadyState = (state: number) => {
-    const event = new CustomEvent<any>("readystatechange");
+    const event = new CustomEvent<any>('readystatechange');
     // @ts-ignore
     event.readyState = state;
     this.readyState = state;
@@ -229,8 +229,8 @@ export default class SSE {
   /**
    * Handles an error during the SSE connection and dispatches an 'error' event.
    */
-  private onStreamFailure = (e: { currentTarget: { response: any } }) => {
-    const event = new CustomEvent("error");
+  private onStreamFailure = (e: {currentTarget: {response: any}}) => {
+    const event = new CustomEvent('error');
     // @ts-ignore
     event.data = e.currentTarget.response;
     this.dispatchEvent(event);
@@ -241,7 +241,7 @@ export default class SSE {
    * Handles an abort event during the SSE connection and dispatches an 'abort' event.
    */
   private onStreamAbort = (e: any) => {
-    this.dispatchEvent(new CustomEvent("abort"));
+    this.dispatchEvent(new CustomEvent('abort'));
     this.close();
   };
 

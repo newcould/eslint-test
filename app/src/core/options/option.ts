@@ -1,6 +1,6 @@
-import type { OptionsManager } from ".";
-import { Context } from "../context";
-import { RenderProps, RenderPropsBuilder } from "./render-props";
+import type {OptionsManager} from '.';
+import {Context} from '../context';
+import {RenderProps, RenderPropsBuilder} from './render-props';
 
 /**
  * Represents an option in the settings UI.
@@ -17,9 +17,9 @@ import { RenderProps, RenderPropsBuilder } from "./render-props";
 export interface Option {
   id: string;
   defaultValue: any;
-  scope?: "chat" | "user" | "browser";
+  scope?: 'chat' | 'user' | 'browser';
 
-  displayOnSettingsScreen: "speech" | "chat" | "plugins" | "ui" | "user";
+  displayOnSettingsScreen: 'speech' | 'chat' | 'plugins' | 'ui' | 'user';
   displayAsSeparateSection?: boolean;
   resettable?: boolean;
 

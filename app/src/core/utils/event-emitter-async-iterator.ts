@@ -1,4 +1,4 @@
-import EventEmitter from "events";
+import EventEmitter from 'events';
 
 export interface EventEmitterAsyncIteratorOutput<T> {
   eventName: string;
@@ -29,7 +29,7 @@ export class EventEmitterAsyncIterator<T>
 {
   private eventQueue: EventEmitterAsyncIteratorOutput<T>[] = [];
   private resolveQueue: ((
-    value: IteratorResult<EventEmitterAsyncIteratorOutput<T>>
+    value: IteratorResult<EventEmitterAsyncIteratorOutput<T>>,
   ) => void)[] = [];
 
   /**
@@ -62,11 +62,11 @@ export class EventEmitterAsyncIterator<T>
       };
     } else {
       return new Promise<IteratorResult<EventEmitterAsyncIteratorOutput<T>>>(
-        (resolve) => {
-          this.resolveQueue.push((value) => {
+        resolve => {
+          this.resolveQueue.push(value => {
             resolve(value);
           });
-        }
+        },
       );
     }
   }
@@ -87,7 +87,7 @@ export class EventEmitterAsyncIterator<T>
     if (this.resolveQueue.length > 0) {
       const resolve = this.resolveQueue.shift();
       if (resolve) {
-        resolve({ value: output, done: false });
+        resolve({value: output, done: false});
       }
     } else {
       this.eventQueue.push(output);

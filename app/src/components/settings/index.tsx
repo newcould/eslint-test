@@ -1,19 +1,19 @@
-import styled from "@emotion/styled";
-import { Button, Drawer, Tabs } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
-import { useCallback, useEffect } from "react";
-import UserOptionsTab from "./user";
-import ChatOptionsTab from "./chat";
-import { useAppDispatch, useAppSelector } from "../../store";
+import styled from '@emotion/styled';
+import {Button, Drawer, Tabs} from '@mantine/core';
+import {useMediaQuery} from '@mantine/hooks';
+import {useCallback, useEffect} from 'react';
+import UserOptionsTab from './user';
+import ChatOptionsTab from './chat';
+import {useAppDispatch, useAppSelector} from '../../store';
 import {
   closeSettingsUI,
   selectSettingsOption,
   selectSettingsTab,
   setTab,
-} from "../../store/settings-ui";
-import SpeechOptionsTab from "./speech";
-import { FormattedMessage } from "react-intl";
-import UIPreferencesTab from "./ui-preferences";
+} from '../../store/settings-ui';
+import SpeechOptionsTab from './speech';
+import {FormattedMessage} from 'react-intl';
+import UIPreferencesTab from './ui-preferences';
 
 const Container = styled.div`
   padding: 0.4rem 1rem 1rem 1rem;
@@ -82,18 +82,18 @@ export interface SettingsDrawerProps {}
 export default function SettingsDrawer(props: SettingsDrawerProps) {
   const tab = useAppSelector(selectSettingsTab);
   const option = useAppSelector(selectSettingsOption);
-  const small = useMediaQuery("(max-width: 40em)");
+  const small = useMediaQuery('(max-width: 40em)');
 
   const dispatch = useAppDispatch();
   const close = useCallback(() => dispatch(closeSettingsUI()), [dispatch]);
   const onTabChange = useCallback(
     (tab: string) => dispatch(setTab(tab)),
-    [dispatch]
+    [dispatch],
   );
 
   useEffect(() => {
     setTimeout(() => {
-      document.querySelector(".focused")?.scrollIntoView();
+      document.querySelector('.focused')?.scrollIntoView();
     }, 1000);
   }, [tab, option]);
 
@@ -108,7 +108,7 @@ export default function SettingsDrawer(props: SettingsDrawerProps) {
       withCloseButton={false}
     >
       <Container>
-        <Tabs value={tab} onTabChange={onTabChange} style={{ margin: "0rem" }}>
+        <Tabs value={tab} onTabChange={onTabChange} style={{margin: '0rem'}}>
           <Tabs.List grow={small}>
             <Tabs.Tab value="chat">Chat</Tabs.Tab>
             <Tabs.Tab value="speech">Speech</Tabs.Tab>
@@ -123,7 +123,7 @@ export default function SettingsDrawer(props: SettingsDrawerProps) {
         <div id="save">
           <Button variant="light" fullWidth size="md" onClick={close}>
             <FormattedMessage
-              defaultMessage={"Save and Close"}
+              defaultMessage={'Save and Close'}
               description="Label for the button that closes the Settings screen, saving any changes"
             />
           </Button>

@@ -1,4 +1,4 @@
-import * as hashes from "jshashes";
+import * as hashes from 'jshashes';
 
 /**
  * Pauses the execution of the function for a specified duration.
@@ -8,7 +8,7 @@ import * as hashes from "jshashes";
  * @returns {Promise} A Promise that resolves after the specified duration.
  */
 export function sleep(ms: number): Promise<any> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
@@ -21,7 +21,7 @@ export function sleep(ms: number): Promise<any> {
  */
 export function ellipsize(text: string, maxLength: number): string {
   if (text.length > maxLength) {
-    return text.substring(0, maxLength) + "...";
+    return text.substring(0, maxLength) + '...';
   }
   return text;
 }
@@ -81,7 +81,7 @@ export function getRateLimitResetTimeFromResponse(response: Response): number {
   const fallbackValue = now + 20 * 1000;
   const maxValue = now + 2 * 60 * 1000;
 
-  const rateLimitReset = response.headers.get("x-ratelimit-reset");
+  const rateLimitReset = response.headers.get('x-ratelimit-reset');
   if (!rateLimitReset) {
     return fallbackValue;
   }

@@ -1,20 +1,20 @@
-import * as Y from "yjs";
-import { Chat, Message } from "./types";
-import EventEmitter from "events";
-import { v4 as uuidv4 } from "uuid";
-import { MessageTree } from "./message-tree";
+import * as Y from 'yjs';
+import {Chat, Message} from './types';
+import EventEmitter from 'events';
+import {v4 as uuidv4} from 'uuid';
+import {MessageTree} from './message-tree';
 
-const METADATA_KEY = "metadata";
-const IMPORTED_METADATA_KEY = "imported-metadata";
-const PLUGIN_OPTIONS_KEY = "plugin-options";
-const MESSAGES_KEY = "messages";
-const CONTENT_KEY = "messages:content";
-const DONE_KEY = "messages:done";
+const METADATA_KEY = 'metadata';
+const IMPORTED_METADATA_KEY = 'imported-metadata';
+const PLUGIN_OPTIONS_KEY = 'plugin-options';
+const MESSAGES_KEY = 'messages';
+const CONTENT_KEY = 'messages:content';
+const DONE_KEY = 'messages:done';
 
 export class YChat {
   private callback: any;
   private pendingContent = new Map<string, string>();
-  private prefix = "chat." + this.id + ".";
+  private prefix = 'chat.' + this.id + '.';
 
   public static from(root: Y.Doc, id: string) {
     // const id = data.get('metadata').get('id') as string;
@@ -35,7 +35,7 @@ export class YChat {
   }
 
   public get deleted(): boolean {
-    return this.metadata.get("deleted") || false;
+    return this.metadata.get('deleted') || false;
   }
 
   public get metadata(): Y.Map<any> {
@@ -64,15 +64,15 @@ export class YChat {
 
   public get title() {
     return (
-      (this.metadata.get("title") as string) ||
-      (this.importedMetadata.get("title") as string) ||
+      (this.metadata.get('title') as string) ||
+      (this.importedMetadata.get('title') as string) ||
       null
     );
   }
 
   public set title(value: string | null) {
     if (value) {
-      this.metadata.set("title", value);
+      this.metadata.set('title', value);
     }
   }
 
@@ -90,7 +90,7 @@ export class YChat {
     return (
       this.pendingContent.get(messageID) ||
       this.content.get(messageID)?.toString() ||
-      ""
+      ''
     );
   }
 
@@ -99,17 +99,17 @@ export class YChat {
   }
 
   public getOption(pluginID: string, optionID: string): any {
-    const key = pluginID + "." + optionID;
+    const key = pluginID + '.' + optionID;
     return this.pluginOptions?.get(key) || null;
   }
 
   public setOption(pluginID: string, optionID: string, value: any) {
-    const key = pluginID + "." + optionID;
+    const key = pluginID + '.' + optionID;
     return this.pluginOptions.set(key, value);
   }
 
   public hasOption(pluginID: string, optionID: string) {
-    const key = pluginID + "." + optionID;
+    const key = pluginID + '.' + optionID;
     return this.pluginOptions.has(key);
   }
 
@@ -129,7 +129,7 @@ export class YChat {
     if (this.deleted) {
       if (this.metadata.size > 1) {
         for (const key of Array.from(this.metadata.keys())) {
-          if (key !== "deleted") {
+          if (key !== 'deleted') {
             this.metadata.delete(key);
           }
         }
@@ -155,7 +155,7 @@ export class YChatDoc extends EventEmitter {
   // public chats = this.root.getMap<Y.Map<any>>('chats');
   // public deletedChatIDs = this.root.getArray<string>('deletedChatIDs');
   public deletedChatIDsSet = new Set<string>();
-  public options = this.root.getMap<Y.Map<any>>("options");
+  public options = this.root.getMap<Y.Map<any>>('options');
   private yChats = new Map<string, YChat>();
 
   private observed = new Set<string>();
@@ -164,7 +164,7 @@ export class YChatDoc extends EventEmitter {
     super();
 
     this.root.whenLoaded.then(() => {
-      const chatIDs = Array.from(this.root.getMap("chats").keys());
+      const chatIDs = Array.from(this.root.getMap('chats').keys());
       for (const id of chatIDs) {
         this.observeChat(id);
       }
@@ -173,7 +173,7 @@ export class YChatDoc extends EventEmitter {
 
   private observeChat(id: string, yChat = this.getYChat(id)) {
     if (!this.observed.has(id)) {
-      yChat?.observeDeep(() => this.emit("update", id));
+      yChat?.observeDeep(() => this.emit('update', id));
       this.observed.add(id);
     }
   }
@@ -188,7 +188,7 @@ export class YChatDoc extends EventEmitter {
   // }
 
   public get chatIDMap() {
-    return this.root.getMap("chatIDs");
+    return this.root.getMap('chatIDs');
   }
 
   public getYChat(id: string, expectContent = false) {
@@ -221,7 +221,7 @@ export class YChatDoc extends EventEmitter {
   }
 
   public getAllYChats() {
-    return this.getChatIDs().map((id) => this.getYChat(id)!);
+    return this.getChatIDs().map(id => this.getYChat(id)!);
   }
 
   public transact(cb: () => void) {
@@ -232,15 +232,15 @@ export class YChatDoc extends EventEmitter {
     const chat = this.getYChat(message.chatID, true);
 
     if (!chat) {
-      throw new Error("Chat not found");
+      throw new Error('Chat not found');
     }
 
     this.transact(() => {
       chat.messages.set(message.id, {
         ...message,
-        content: "",
+        content: '',
       });
-      chat.content.set(message.id, new Y.Text(message.content || ""));
+      chat.content.set(message.id, new Y.Text(message.content || ''));
       if (message.done) {
         chat.done.set(message.id, message.done);
       }
@@ -257,7 +257,7 @@ export class YChatDoc extends EventEmitter {
     const tree = new MessageTree();
     const chat = this.getYChat(chatID);
 
-    chat?.messages?.forEach((m) => {
+    chat?.messages?.forEach(m => {
       try {
         const content = chat.getMessageContent(m.id);
         const done = chat.done.get(m.id) || false;
@@ -275,7 +275,7 @@ export class YChatDoc extends EventEmitter {
     const message = tree.get(messageID);
 
     if (!message) {
-      throw new Error("message not found: " + messageID);
+      throw new Error('message not found: ' + messageID);
     }
 
     const messages: Message[] = message.parentID
@@ -304,12 +304,12 @@ export class YChatDoc extends EventEmitter {
   }
 
   public getOption(pluginID: string, optionID: string): any {
-    const key = pluginID + "." + optionID;
+    const key = pluginID + '.' + optionID;
     return this.options.get(key);
   }
 
   public setOption(pluginID: string, optionID: string, value: any) {
-    const key = pluginID + "." + optionID;
+    const key = pluginID + '.' + optionID;
     return this.options.set(key, value);
   }
 }

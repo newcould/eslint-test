@@ -1,6 +1,6 @@
-import { Voice } from "../core/tts/types";
-import DirectTTSPlugin from "../core/tts/direct-tts-plugin";
-import { PluginDescription } from "../core/plugins/plugin-description";
+import {Voice} from '../core/tts/types';
+import DirectTTSPlugin from '../core/tts/direct-tts-plugin';
+import {PluginDescription} from '../core/plugins/plugin-description';
 
 export interface WebSpeechPluginOptions {
   voice: string | null;
@@ -25,26 +25,26 @@ export default class WebSpeechPlugin extends DirectTTSPlugin<WebSpeechPluginOpti
   }
 
   describe(): PluginDescription {
-    const id = "web-speech";
+    const id = 'web-speech';
     return {
       id,
       name: "Your Browser's Built-In Text-to-Speech",
       options: [
         {
-          id: "voice",
+          id: 'voice',
           defaultValue: null,
 
-          displayOnSettingsScreen: "speech",
+          displayOnSettingsScreen: 'speech',
           displayAsSeparateSection: true,
 
           renderProps: (value, options) => ({
-            type: "select",
-            label: "Voice",
-            options: WebSpeechPlugin.voices.map((v) => ({
+            type: 'select',
+            label: 'Voice',
+            options: WebSpeechPlugin.voices.map(v => ({
               label: v.name!,
               value: v.id,
             })),
-            hidden: options.getOption("tts", "service") !== id,
+            hidden: options.getOption('tts', 'service') !== id,
           }),
         },
       ],
@@ -52,8 +52,8 @@ export default class WebSpeechPlugin extends DirectTTSPlugin<WebSpeechPluginOpti
   }
 
   async getVoices() {
-    WebSpeechPlugin.voices = window.speechSynthesis.getVoices().map((v) => ({
-      service: "web-speech",
+    WebSpeechPlugin.voices = window.speechSynthesis.getVoices().map(v => ({
+      service: 'web-speech',
       id: v.name,
       name: v.name,
     }));
@@ -63,7 +63,7 @@ export default class WebSpeechPlugin extends DirectTTSPlugin<WebSpeechPluginOpti
   async getCurrentVoice(): Promise<Voice> {
     let voiceID = this.options?.voice;
 
-    const voice = WebSpeechPlugin.voices.find((v) => v.id === voiceID);
+    const voice = WebSpeechPlugin.voices.find(v => v.id === voiceID);
 
     if (voice) {
       return voice;
@@ -84,7 +84,7 @@ export default class WebSpeechPlugin extends DirectTTSPlugin<WebSpeechPluginOpti
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.voice = window.speechSynthesis
         .getVoices()
-        .find((v) => v.name === voice!.id)!;
+        .find(v => v.name === voice!.id)!;
 
       utterance.onstart = () => {
         this.speaking++;
@@ -114,7 +114,7 @@ export default class WebSpeechPlugin extends DirectTTSPlugin<WebSpeechPluginOpti
     speechSynthesis.cancel();
     this.speaking = 0;
     for (const reject of this.rejections) {
-      reject("cancelled");
+      reject('cancelled');
     }
     this.rejections = [];
   }

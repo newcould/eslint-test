@@ -1,13 +1,13 @@
-import { OpenAIMessage } from "../chat/types";
-import { CoreBPE, RankMap } from "./bpe";
-import ranks from "./cl100k_base.json";
+import {OpenAIMessage} from '../chat/types';
+import {CoreBPE, RankMap} from './bpe';
+import ranks from './cl100k_base.json';
 
 const special_tokens: any = {
-  "<|endoftext|>": 100257,
-  "<|fim_prefix|>": 100258,
-  "<|fim_middle|>": 100259,
-  "<|fim_suffix|>": 100260,
-  "<|endofprompt|>": 100276,
+  '<|endoftext|>': 100257,
+  '<|fim_prefix|>': 100258,
+  '<|fim_middle|>': 100259,
+  '<|fim_suffix|>': 100260,
+  '<|endofprompt|>': 100276,
 };
 
 const special_tokens_map = new Map<string, number>();
@@ -59,7 +59,7 @@ export function truncateText(text: string, tokens: number) {
 export function truncateMessage(message: OpenAIMessage, tokens: number) {
   const encoded = tokenizer.encodeOrdinary(message.content);
   const decoded = tokenizer.decodeBytes(
-    encoded.slice(0, Math.max(0, tokens - overheadTokens.perMessage))
+    encoded.slice(0, Math.max(0, tokens - overheadTokens.perMessage)),
   );
   return {
     role: message.role,

@@ -1,27 +1,27 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from ".";
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import type {RootState} from '.';
 
 const initialState = {
-  modal: "",
+  modal: '',
 };
 
 export const uiSlice = createSlice({
-  name: "ui",
+  name: 'ui',
   initialState,
   reducers: {
     openLoginModal(state) {
-      state.modal = "login";
+      state.modal = 'login';
     },
     openSignupModal(state) {
-      state.modal = "signup";
+      state.modal = 'signup';
     },
     closeModals(state) {
-      state.modal = "";
+      state.modal = '';
     },
   },
 });
 
-export const { openLoginModal, openSignupModal, closeModals } = uiSlice.actions;
+export const {openLoginModal, openSignupModal, closeModals} = uiSlice.actions;
 
 export const selectModal = (state: RootState) => state.ui.modal;
 

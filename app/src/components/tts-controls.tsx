@@ -1,10 +1,10 @@
-import styled from "@emotion/styled";
-import { ActionIcon, Button } from "@mantine/core";
-import { useCallback, useEffect } from "react";
-import { useTTS } from "../core/tts/use-tts";
-import { useAppContext } from "../core/context";
-import { APP_NAME } from "../values";
-import { useHotkeys } from "@mantine/hooks";
+import styled from '@emotion/styled';
+import {ActionIcon, Button} from '@mantine/core';
+import {useCallback, useEffect} from 'react';
+import {useTTS} from '../core/tts/use-tts';
+import {useAppContext} from '../core/context';
+import {APP_NAME} from '../values';
+import {useHotkeys} from '@mantine/hooks';
 
 const Container = styled.div`
   background: #292933;
@@ -20,7 +20,7 @@ const Container = styled.div`
   text-align: center;
 
   p {
-    font-family: "Work Sans", sans-serif;
+    font-family: 'Work Sans', sans-serif;
     font-size: 80%;
     margin-bottom: 1rem;
   }
@@ -40,7 +40,7 @@ const Container = styled.div`
 
 export default function AudioControls(props: any) {
   const context = useAppContext();
-  const { state, play, pause, cancel } = useTTS();
+  const {state, play, pause, cancel} = useTTS();
 
   const handlePlayPause = useCallback(() => {
     if (state?.playing) {
@@ -76,16 +76,16 @@ export default function AudioControls(props: any) {
   }, [state, play]);
 
   useEffect(() => {
-    if ("mediaSession" in navigator) {
+    if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: context.currentChat.chat?.title || APP_NAME,
         artist: APP_NAME,
       });
 
-      navigator.mediaSession.setActionHandler("play", handlePlayPause);
-      navigator.mediaSession.setActionHandler("pause", handlePlayPause);
-      navigator.mediaSession.setActionHandler("previoustrack", handlePrevious);
-      navigator.mediaSession.setActionHandler("nexttrack", handleNext);
+      navigator.mediaSession.setActionHandler('play', handlePlayPause);
+      navigator.mediaSession.setActionHandler('pause', handlePlayPause);
+      navigator.mediaSession.setActionHandler('previoustrack', handlePrevious);
+      navigator.mediaSession.setActionHandler('nexttrack', handleNext);
     }
   }, [
     context.currentChat.chat?.title,
@@ -95,14 +95,14 @@ export default function AudioControls(props: any) {
   ]);
 
   useEffect(() => {
-    if ("mediaSession" in navigator) {
+    if ('mediaSession' in navigator) {
       navigator.mediaSession.playbackState = state?.playing
-        ? "playing"
-        : "paused";
+        ? 'playing'
+        : 'paused';
     }
   }, [state?.playing]);
 
-  useHotkeys([["Space", handlePlayPause]]);
+  useHotkeys([['Space', handlePlayPause]]);
 
   if (!state) {
     return null;
@@ -123,7 +123,7 @@ export default function AudioControls(props: any) {
           <i className="fa fa-step-backward" />
         </ActionIcon>
         <ActionIcon onClick={handlePlayPause} variant="light" color="blue">
-          <i className={state?.playing ? "fa fa-pause" : "fa fa-play"} />
+          <i className={state?.playing ? 'fa fa-pause' : 'fa fa-play'} />
         </ActionIcon>
         <ActionIcon
           onClick={handleNext}

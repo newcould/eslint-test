@@ -1,13 +1,13 @@
-import styled from "@emotion/styled";
-import ReactMarkdown from "react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-import remarkGfm from "remark-gfm";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
-import { Button, CopyButton } from "@mantine/core";
-import { useMemo } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
+import styled from '@emotion/styled';
+import ReactMarkdown from 'react-markdown';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
+import {vscDarkPlus} from 'react-syntax-highlighter/dist/esm/styles/prism';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import {Button, CopyButton} from '@mantine/core';
+import {useMemo} from 'react';
+import {FormattedMessage, useIntl} from 'react-intl';
 
 const Code = styled.div`
   padding: 0;
@@ -59,7 +59,7 @@ export function Markdown(props: MarkdownProps) {
   const intl = useIntl();
 
   const classes = useMemo(() => {
-    const classes = ["prose", "dark:prose-invert"];
+    const classes = ['prose', 'dark:prose-invert'];
 
     if (props.className) {
       classes.push(props.className);
@@ -70,41 +70,41 @@ export function Markdown(props: MarkdownProps) {
 
   const elem = useMemo(
     () => (
-      <div className={classes.join(" ")}>
+      <div className={classes.join(' ')}>
         <ReactMarkdown
           remarkPlugins={[remarkGfm, remarkMath]}
           rehypePlugins={[rehypeKatex]}
           components={{
-            ol({ start, children }) {
+            ol({start, children}) {
               return (
                 <ol
                   start={start ?? 1}
-                  style={{ counterReset: `list-item ${start || 1}` }}
+                  style={{counterReset: `list-item ${start || 1}`}}
                 >
                   {children}
                 </ol>
               );
             },
-            code({ node, inline, className, children, ...props }) {
-              const match = /language-(\w+)/.exec(className || "");
+            code({node, inline, className, children, ...props}) {
+              const match = /language-(\w+)/.exec(className || '');
               const code = String(children);
               return !inline ? (
                 <>
                   <Code>
                     <Header>
-                      {code.startsWith("<svg") && code.includes("</svg>") && (
+                      {code.startsWith('<svg') && code.includes('</svg>') && (
                         <Button
                           variant="subtle"
                           size="sm"
                           compact
                           onClick={() => {
                             const blob = new Blob([code], {
-                              type: "image/svg+xml",
+                              type: 'image/svg+xml',
                             });
                             const url = URL.createObjectURL(blob);
-                            const a = document.createElement("a");
+                            const a = document.createElement('a');
                             a.href = url;
-                            a.download = "image.svg";
+                            a.download = 'image.svg';
                             a.click();
                           }}
                         >
@@ -115,7 +115,7 @@ export function Markdown(props: MarkdownProps) {
                         </Button>
                       )}
                       <CopyButton value={code}>
-                        {({ copy, copied }) => (
+                        {({copy, copied}) => (
                           <Button
                             variant="subtle"
                             size="sm"
@@ -143,12 +143,12 @@ export function Markdown(props: MarkdownProps) {
                     <SyntaxHighlighter
                       children={code}
                       style={vscDarkPlus as any}
-                      language={match?.[1] || "text"}
+                      language={match?.[1] || 'text'}
                       PreTag="div"
                       {...props}
                     />
                   </Code>
-                  {code.startsWith("<svg") && code.includes("</svg>") && (
+                  {code.startsWith('<svg') && code.includes('</svg>') && (
                     <ImagePreview>
                       <img src={`data:image/svg+xml;base64,${btoa(code)}`} />
                     </ImagePreview>
@@ -166,7 +166,7 @@ export function Markdown(props: MarkdownProps) {
         </ReactMarkdown>
       </div>
     ),
-    [props.content, classes, intl]
+    [props.content, classes, intl],
   );
 
   return elem;

@@ -15,12 +15,12 @@
  * will rely on the in-memory cache.
  */
 
-import * as idb from "idb-keyval";
+import * as idb from 'idb-keyval';
 
 let supported = true;
 const inMemoryCache = new Map<string, any>();
 
-const testDB = indexedDB.open("idb-test");
+const testDB = indexedDB.open('idb-test');
 testDB.onerror = () => {
   supported = false;
 };
@@ -29,7 +29,7 @@ export async function keys() {
   if (supported) {
     try {
       const keys = await idb.keys();
-      return Array.from(keys).map((k) => k.toString());
+      return Array.from(keys).map(k => k.toString());
     } catch (e) {}
   }
   return Array.from(inMemoryCache.keys());

@@ -1,18 +1,18 @@
-import { CoreBPE, RankMap } from "./bpe";
-import fs from "fs";
-import path from "path";
-import { OpenAIMessage } from "../message";
+import {CoreBPE, RankMap} from './bpe';
+import fs from 'fs';
+import path from 'path';
+import {OpenAIMessage} from '../message';
 
 const ranks = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "./cl100k_base.json"), "utf8")
+  fs.readFileSync(path.join(__dirname, './cl100k_base.json'), 'utf8'),
 );
 
 const special_tokens: any = {
-  "<|endoftext|>": 100257,
-  "<|fim_prefix|>": 100258,
-  "<|fim_middle|>": 100259,
-  "<|fim_suffix|>": 100260,
-  "<|endofprompt|>": 100276,
+  '<|endoftext|>': 100257,
+  '<|fim_prefix|>': 100258,
+  '<|fim_middle|>': 100259,
+  '<|fim_suffix|>': 100260,
+  '<|endofprompt|>': 100276,
 };
 
 const special_tokens_map = new Map<string, number>();

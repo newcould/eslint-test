@@ -1,12 +1,12 @@
-import type { PluginContext } from "./plugin-context";
-import type Plugin from ".";
-import { pluginMetadata } from "./metadata";
-import { registeredPlugins } from "../../plugins";
+import type {PluginContext} from './plugin-context';
+import type Plugin from '.';
+import {pluginMetadata} from './metadata';
+import {registeredPlugins} from '../../plugins';
 
 export async function pluginRunner(
   name: string,
   pluginContext: (pluginID: string) => PluginContext,
-  callback: (p: Plugin<any>) => Promise<any>
+  callback: (p: Plugin<any>) => Promise<any>,
 ) {
   const startTime = Date.now();
 

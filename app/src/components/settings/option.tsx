@@ -11,14 +11,14 @@ export default function SettingsOption(props: {
   }
 
   return (
-    <section className={props.focused ? "focused" : ""}>
+    <section className={props.focused ? 'focused' : ''}>
       {props.heading && <h3>{props.heading}</h3>}
       {props.description && (
         <div
           style={{
-            fontSize: "90%",
+            fontSize: '90%',
             opacity: 0.9,
-            marginTop: "-0.5rem",
+            marginTop: '-0.5rem',
           }}
         >
           {props.description}

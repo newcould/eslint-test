@@ -1,5 +1,5 @@
-import { defaultModel } from "./openai";
-import { Parameters } from "./types";
+import {defaultModel} from './openai';
+import {Parameters} from './types';
 
 export const defaultParameters: Parameters = {
   temperature: 0.5,
@@ -7,10 +7,10 @@ export const defaultParameters: Parameters = {
 };
 
 export function loadParameters(
-  id: string | null | undefined = null
+  id: string | null | undefined = null,
 ): Parameters {
-  const apiKey = localStorage.getItem("openai-api-key") || undefined;
-  const key = id ? `parameters-${id}` : "parameters";
+  const apiKey = localStorage.getItem('openai-api-key') || undefined;
+  const key = id ? `parameters-${id}` : 'parameters';
   try {
     const raw = localStorage.getItem(key);
     if (raw) {
@@ -19,7 +19,7 @@ export function loadParameters(
       return parameters;
     }
   } catch (e) {}
-  return id ? loadParameters() : { ...defaultParameters, apiKey };
+  return id ? loadParameters() : {...defaultParameters, apiKey};
 }
 
 export function saveParameters(id: string, parameters: Parameters) {
@@ -28,7 +28,7 @@ export function saveParameters(id: string, parameters: Parameters) {
     delete parameters.apiKey;
 
     localStorage.setItem(`parameters-${id}`, JSON.stringify(parameters));
-    localStorage.setItem("parameters", JSON.stringify(parameters));
+    localStorage.setItem('parameters', JSON.stringify(parameters));
 
     if (apiKey) {
       localStorage.setItem(`openai-api-key`, apiKey);

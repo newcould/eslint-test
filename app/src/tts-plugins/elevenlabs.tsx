@@ -1,15 +1,15 @@
-import { FormattedMessage } from "react-intl";
-import { PluginDescription } from "../core/plugins/plugin-description";
-import TTSPlugin from "../core/tts/tts-plugin";
-import { Voice } from "../core/tts/types";
+import {FormattedMessage} from 'react-intl';
+import {PluginDescription} from '../core/plugins/plugin-description';
+import TTSPlugin from '../core/tts/tts-plugin';
+import {Voice} from '../core/tts/types';
 import {
   defaultElevenLabsVoiceID,
   defaultVoiceList,
-} from "./elevenlabs-defaults";
-import { backend } from "../core/backend";
+} from './elevenlabs-defaults';
+import {backend} from '../core/backend';
 
 function isProxySupported() {
-  return !!backend.current?.services?.includes("elevenlabs");
+  return !!backend.current?.services?.includes('elevenlabs');
 }
 
 function shouldUseProxy(apiKey: string | undefined | null) {
@@ -17,12 +17,12 @@ function shouldUseProxy(apiKey: string | undefined | null) {
 }
 
 function getEndpoint(proxied = false) {
-  return proxied ? "/chatapi/proxies/elevenlabs" : "https://api.elevenlabs.io";
+  return proxied ? '/chatapi/proxies/elevenlabs' : 'https://api.elevenlabs.io';
 }
 
 function getVoiceFromElevenlabsVoiceObject(v: any) {
   return {
-    service: "elevenlabs",
+    service: 'elevenlabs',
     id: v.voice_id,
     name: v.name,
     sampleAudioURL: v.preview_url,
@@ -43,7 +43,7 @@ export interface ElevenLabsPluginOptions {
  */
 export default class ElevenLabsPlugin extends TTSPlugin<ElevenLabsPluginOptions> {
   static voices: Voice[] = defaultVoiceList.map(
-    getVoiceFromElevenlabsVoiceObject
+    getVoiceFromElevenlabsVoiceObject,
   );
 
   private proxied = shouldUseProxy(this.options?.apiKey);
@@ -65,24 +65,24 @@ export default class ElevenLabsPlugin extends TTSPlugin<ElevenLabsPluginOptions>
    */
   describe(): PluginDescription {
     return {
-      id: "elevenlabs",
-      name: "ElevenLabs Text-to-Speech",
+      id: 'elevenlabs',
+      name: 'ElevenLabs Text-to-Speech',
       options: [
         {
-          id: "apiKey",
+          id: 'apiKey',
           defaultValue: null,
 
-          displayOnSettingsScreen: "speech",
+          displayOnSettingsScreen: 'speech',
           displayAsSeparateSection: true,
           resettable: false,
 
           renderProps: (value, options, context) => ({
-            type: "password",
+            type: 'password',
             label: context.intl.formatMessage({
-              defaultMessage: "Your ElevenLabs API Key",
+              defaultMessage: 'Your ElevenLabs API Key',
             }),
             placeholder: context.intl.formatMessage({
-              defaultMessage: "Paste your API key here",
+              defaultMessage: 'Paste your API key here',
             }),
             description: (
               <>
@@ -107,59 +107,59 @@ export default class ElevenLabsPlugin extends TTSPlugin<ElevenLabsPluginOptions>
                 </p>
               </>
             ),
-            hidden: options.getOption("tts", "service") !== "elevenlabs",
+            hidden: options.getOption('tts', 'service') !== 'elevenlabs',
           }),
         },
         {
-          id: "voice",
+          id: 'voice',
           defaultValue: defaultElevenLabsVoiceID,
 
-          displayOnSettingsScreen: "speech",
+          displayOnSettingsScreen: 'speech',
           displayAsSeparateSection: true,
 
           renderProps: (value, options, context) => {
             return {
-              type: "select",
-              label: "Voice",
+              type: 'select',
+              label: 'Voice',
               disabled:
-                !options.getOption("elevenlabs", "apiKey") &&
+                !options.getOption('elevenlabs', 'apiKey') &&
                 !isProxySupported(),
-              hidden: options.getOption("tts", "service") !== "elevenlabs",
+              hidden: options.getOption('tts', 'service') !== 'elevenlabs',
               options: [
-                ...ElevenLabsPlugin.voices.map((v) => ({
+                ...ElevenLabsPlugin.voices.map(v => ({
                   label: v.name!,
                   value: v.id,
                 })),
                 {
                   label: context.intl.formatMessage({
-                    defaultMessage: "Custom Voice ID",
+                    defaultMessage: 'Custom Voice ID',
                   }),
-                  value: "custom",
+                  value: 'custom',
                 },
               ],
             };
           },
         },
         {
-          id: "customVoiceID",
+          id: 'customVoiceID',
           defaultValue: null,
-          displayOnSettingsScreen: "speech",
+          displayOnSettingsScreen: 'speech',
           renderProps: (value, options, context) => {
             return {
-              type: "text",
+              type: 'text',
               label: context.intl.formatMessage({
-                defaultMessage: "Custom Voice ID",
+                defaultMessage: 'Custom Voice ID',
               }),
 
               // hide when custom voice is not selected:
-              disabled: options.getOption("elevenlabs", "voice") !== "custom",
+              disabled: options.getOption('elevenlabs', 'voice') !== 'custom',
               hidden:
-                options.getOption("elevenlabs", "voice") !== "custom" ||
-                options.getOption("tts", "service") !== "elevenlabs",
+                options.getOption('elevenlabs', 'voice') !== 'custom' ||
+                options.getOption('tts', 'service') !== 'elevenlabs',
             };
           },
           validate: (value, options) =>
-            options.getOption("elevenlabs", "voice") !== "custom",
+            options.getOption('elevenlabs', 'voice') !== 'custom',
         },
       ],
     };
@@ -184,7 +184,7 @@ export default class ElevenLabsPlugin extends TTSPlugin<ElevenLabsPluginOptions>
     const json = await response.json();
     if (json?.voices?.length) {
       ElevenLabsPlugin.voices = json.voices.map(
-        getVoiceFromElevenlabsVoiceObject
+        getVoiceFromElevenlabsVoiceObject,
       );
     }
     return ElevenLabsPlugin.voices;
@@ -198,16 +198,16 @@ export default class ElevenLabsPlugin extends TTSPlugin<ElevenLabsPluginOptions>
     let voiceID = this.options?.voice;
 
     // If using a custom voice ID, construct a voice object with the provided voice ID
-    if (voiceID === "custom" && this.options?.customVoiceID) {
+    if (voiceID === 'custom' && this.options?.customVoiceID) {
       return {
-        service: "elevenlabs",
+        service: 'elevenlabs',
         id: this.options.customVoiceID,
-        name: "Custom Voice",
+        name: 'Custom Voice',
       };
     }
 
     // Search for a matching voice object
-    const voice = ElevenLabsPlugin.voices.find((v) => v.id === voiceID);
+    const voice = ElevenLabsPlugin.voices.find(v => v.id === voiceID);
     if (voice) {
       return voice;
     }
@@ -215,7 +215,7 @@ export default class ElevenLabsPlugin extends TTSPlugin<ElevenLabsPluginOptions>
     // If no matching voice is found, return a default Voice object
     // with the defaultElevenLabsVoiceID and 'elevenlabs' as the service
     return {
-      service: "elevenlabs",
+      service: 'elevenlabs',
       id: defaultElevenLabsVoiceID,
     };
   }
@@ -228,17 +228,17 @@ export default class ElevenLabsPlugin extends TTSPlugin<ElevenLabsPluginOptions>
    */
   async speakToBuffer(
     text: string,
-    voice?: Voice
+    voice?: Voice,
   ): Promise<ArrayBuffer | null> {
     if (!voice) {
       voice = await this.getCurrentVoice();
     }
 
-    const url = this.endpoint + "/v1/text-to-speech/" + voice.id;
+    const url = this.endpoint + '/v1/text-to-speech/' + voice.id;
 
     const response = await fetch(url, {
       headers: this.createHeaders(),
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify({
         text,
       }),
@@ -256,11 +256,11 @@ export default class ElevenLabsPlugin extends TTSPlugin<ElevenLabsPluginOptions>
    */
   private createHeaders(): Record<string, string> {
     const headers: Record<string, string> = {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     };
 
     if (!this.proxied && this.options?.apiKey) {
-      headers["xi-api-key"] = this.options.apiKey;
+      headers['xi-api-key'] = this.options.apiKey;
     }
 
     return headers;

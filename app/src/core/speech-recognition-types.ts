@@ -70,27 +70,27 @@ declare global {
       type: K,
       listener: (
         this: SpeechRecognition,
-        ev: SpeechRecognitionEventMap[K]
+        ev: SpeechRecognitionEventMap[K],
       ) => any,
-      options?: boolean | AddEventListenerOptions
+      options?: boolean | AddEventListenerOptions,
     ): void;
     addEventListener(
       type: string,
       listener: EventListenerOrEventListenerObject,
-      options?: boolean | AddEventListenerOptions
+      options?: boolean | AddEventListenerOptions,
     ): void;
     removeEventListener<K extends keyof SpeechRecognitionEventMap>(
       type: K,
       listener: (
         this: SpeechRecognition,
-        ev: SpeechRecognitionEventMap[K]
+        ev: SpeechRecognitionEventMap[K],
       ) => any,
-      options?: boolean | EventListenerOptions
+      options?: boolean | EventListenerOptions,
     ): void;
     removeEventListener(
       type: string,
       listener: EventListenerOrEventListenerObject,
-      options?: boolean | EventListenerOptions
+      options?: boolean | EventListenerOptions,
     ): void;
   }
 
@@ -134,4 +134,4 @@ if (window.SpeechRecognition) {
 
 const supportsSpeechRecognition = speechRecognition !== null;
 
-export { speechRecognition, supportsSpeechRecognition };
+export {speechRecognition, supportsSpeechRecognition};

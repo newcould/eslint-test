@@ -1,12 +1,12 @@
-import { EventEmitter } from "events";
-import { PluginDescription } from "../plugins/plugin-description";
-import { Option } from "./option";
-import { YChat, YChatDoc } from "../chat/y-chat";
-import { globalOptions } from "../../global-options";
-import { OptionGroup } from "./option-group";
-import { BroadcastChannel } from "broadcast-channel";
+import {EventEmitter} from 'events';
+import {PluginDescription} from '../plugins/plugin-description';
+import {Option} from './option';
+import {YChat, YChatDoc} from '../chat/y-chat';
+import {globalOptions} from '../../global-options';
+import {OptionGroup} from './option-group';
+import {BroadcastChannel} from 'broadcast-channel';
 
-export const broadcastChannel = new BroadcastChannel("options");
+export const broadcastChannel = new BroadcastChannel('options');
 
 function cacheKey(groupID: string, optionID: string, chatID?: string | null) {
   return chatID ? `${chatID}.${groupID}.${optionID}` : `${groupID}.${optionID}`;
@@ -18,7 +18,7 @@ export class OptionsManager extends EventEmitter {
 
   constructor(
     private yDoc: YChatDoc,
-    private pluginMetadata: PluginDescription[]
+    private pluginMetadata: PluginDescription[],
   ) {
     super();
 
@@ -32,13 +32,13 @@ export class OptionsManager extends EventEmitter {
       this.reloadOptions();
 
       if (event.data?.groupID) {
-        this.emit("update", event.data.groupID);
+        this.emit('update', event.data.groupID);
       }
     };
   }
 
   private loadOption(groupID: string, option: Option, yChat?: YChat) {
-    if (option.scope === "chat") {
+    if (option.scope === 'chat') {
       const key: string = cacheKey(groupID, option.id, yChat?.id);
       let value: string | undefined | null;
       if (yChat) {
@@ -46,17 +46,17 @@ export class OptionsManager extends EventEmitter {
       }
 
       // Fallback to localStorage if value is not found in YChat
-      if (typeof value === "undefined" || value === null) {
+      if (typeof value === 'undefined' || value === null) {
         const fallbackKey = cacheKey(groupID, option.id);
         const raw = localStorage.getItem(fallbackKey);
         value = raw ? JSON.parse(raw) : option.defaultValue;
       }
 
       this.optionsCache.set(key, value);
-    } else if (option.scope === "user") {
+    } else if (option.scope === 'user') {
       const key = cacheKey(groupID, option.id);
       console.log(
-        `loading option ${groupID}.${option.id} from YDoc into cache (${key})`
+        `loading option ${groupID}.${option.id} from YDoc into cache (${key})`,
       );
       const value =
         this.yDoc.getOption(groupID, option.id) || option.defaultValue;
@@ -71,18 +71,18 @@ export class OptionsManager extends EventEmitter {
 
   public reloadOptions() {
     // Load browser and user-scoped options
-    this.optionGroups.forEach((group) => {
-      group.options.forEach((option) => {
+    this.optionGroups.forEach(group => {
+      group.options.forEach(option => {
         this.loadOption(group.id, option);
       });
     });
 
     // Load chat-scoped options from YChats
-    this.yDoc.getChatIDs().forEach((chatID) => {
+    this.yDoc.getChatIDs().forEach(chatID => {
       const yChat = this.yDoc.getYChat(chatID)!;
-      this.optionGroups.forEach((group) => {
-        group.options.forEach((option) => {
-          if (option.scope === "chat") {
+      this.optionGroups.forEach(group => {
+        group.options.forEach(option => {
+          if (option.scope === 'chat') {
             this.loadOption(group.id, option, yChat);
           }
         });
@@ -91,21 +91,21 @@ export class OptionsManager extends EventEmitter {
 
     (window as any).options = this;
 
-    this.emit("update");
+    this.emit('update');
   }
 
   public resetOptions(groupID: string, chatID?: string | null) {
     console.log(`resetting ${groupID} options with chatID = ${chatID}`);
 
-    const group = this.optionGroups.find((group) => group.id === groupID);
+    const group = this.optionGroups.find(group => group.id === groupID);
 
-    group?.options.forEach((option) => {
+    group?.options.forEach(option => {
       if (option.resettable) {
         this.setOption(
           group.id,
           option.id,
           option.defaultValue,
-          option.scope === "chat" ? chatID : null
+          option.scope === 'chat' ? chatID : null,
         );
       }
     });
@@ -113,13 +113,13 @@ export class OptionsManager extends EventEmitter {
 
   public getAllOptions(
     groupID: string,
-    chatID?: string | null
+    chatID?: string | null,
   ): Record<string, any> {
     const options: Record<string, any> = {};
 
-    const group = this.optionGroups.find((group) => group.id === groupID);
+    const group = this.optionGroups.find(group => group.id === groupID);
 
-    group?.options.forEach((option) => {
+    group?.options.forEach(option => {
       options[option.id] = this.getOption(groupID, option.id, chatID);
     });
 
@@ -130,23 +130,23 @@ export class OptionsManager extends EventEmitter {
     groupID: string,
     optionID: string,
     chatID?: string | null,
-    validate = false
+    validate = false,
   ): T {
     const option = this.findOption(groupID, optionID);
     if (!option) {
       throw new Error(
-        `option not found (group = ${groupID}), option = ${optionID}`
+        `option not found (group = ${groupID}), option = ${optionID}`,
       );
     }
 
     const key = cacheKey(
       groupID,
       optionID,
-      option.scope === "chat" ? chatID : null
+      option.scope === 'chat' ? chatID : null,
     );
     let value = this.optionsCache.get(key);
 
-    if (typeof value !== "undefined" && value !== null) {
+    if (typeof value !== 'undefined' && value !== null) {
       if (validate) {
         const valid = !option.validate || option.validate(value, this);
         if (valid) {
@@ -160,7 +160,7 @@ export class OptionsManager extends EventEmitter {
     const fallbackKey = cacheKey(groupID, optionID);
     value = this.optionsCache.get(fallbackKey);
 
-    if (typeof value !== "undefined" && value !== null) {
+    if (typeof value !== 'undefined' && value !== null) {
       if (validate) {
         const valid = !option.validate || option.validate(value, this);
         if (valid) {
@@ -177,7 +177,7 @@ export class OptionsManager extends EventEmitter {
   public getValidatedOption(
     groupID: string,
     optionID: string,
-    chatID?: string | null
+    chatID?: string | null,
   ): any {
     return this.getOption(groupID, optionID, chatID, true);
   }
@@ -186,13 +186,13 @@ export class OptionsManager extends EventEmitter {
     groupID: string,
     optionID: string,
     value: any,
-    chatID?: string | null
+    chatID?: string | null,
   ) {
     const option = this.findOption(groupID, optionID);
 
     if (!option) {
       console.warn(
-        `option not found (group = ${groupID}), option = ${optionID}`
+        `option not found (group = ${groupID}), option = ${optionID}`,
       );
       return;
     }
@@ -200,15 +200,15 @@ export class OptionsManager extends EventEmitter {
     const key = cacheKey(
       groupID,
       optionID,
-      option.scope === "chat" ? chatID : null
+      option.scope === 'chat' ? chatID : null,
     );
 
     value = value ?? null;
 
-    if (option.scope === "chat") {
+    if (option.scope === 'chat') {
       if (!chatID) {
         console.warn(
-          `cannot set option for chat without chatID (group = ${groupID}), option = ${optionID}, chatID = ${chatID}`
+          `cannot set option for chat without chatID (group = ${groupID}), option = ${optionID}, chatID = ${chatID}`,
         );
         return;
       }
@@ -217,7 +217,7 @@ export class OptionsManager extends EventEmitter {
 
       const fallbackKey = cacheKey(groupID, optionID);
       localStorage.setItem(fallbackKey, JSON.stringify(value));
-    } else if (option.scope === "user") {
+    } else if (option.scope === 'user') {
       this.yDoc.setOption(groupID, optionID, value);
     } else {
       localStorage.setItem(key, JSON.stringify(value));
@@ -227,21 +227,21 @@ export class OptionsManager extends EventEmitter {
 
     // Update cache and emit update event
     this.optionsCache.set(key, value);
-    this.emit("update", groupID, optionID);
+    this.emit('update', groupID, optionID);
 
     // Notify other tabs through the broadcast channel
-    broadcastChannel.postMessage({ groupID, optionID });
+    broadcastChannel.postMessage({groupID, optionID});
   }
 
   public findOption(groupID: string, optionID: string): Option | undefined {
-    const group = this.optionGroups.find((group) => group.id === groupID);
-    const option = group?.options.find((option) => option.id === optionID);
+    const group = this.optionGroups.find(group => group.id === groupID);
+    const option = group?.options.find(option => option.id === optionID);
 
     if (option) {
       return option;
     }
 
-    console.warn("couldn't find option " + groupID + "." + optionID);
+    console.warn("couldn't find option " + groupID + '.' + optionID);
     return undefined;
   }
 

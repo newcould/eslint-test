@@ -1,14 +1,14 @@
-import fs from "fs";
-import { verbose } from "sqlite3";
-import ObjectStore from "./index";
+import fs from 'fs';
+import {verbose} from 'sqlite3';
+import ObjectStore from './index';
 
 const sqlite3 = verbose();
 
-if (!fs.existsSync("./data")) {
-  fs.mkdirSync("./data");
+if (!fs.existsSync('./data')) {
+  fs.mkdirSync('./data');
 }
 
-const db = new sqlite3.Database("./data/object-store.sqlite");
+const db = new sqlite3.Database('./data/object-store.sqlite');
 
 export interface StoredObject {
   key: string;
@@ -36,7 +36,7 @@ export default class SQLiteObjectStore extends ObjectStore {
           } else {
             resolve(row?.value ?? null);
           }
-        }
+        },
       );
     });
   }
@@ -44,7 +44,7 @@ export default class SQLiteObjectStore extends ObjectStore {
   public async put(
     key: string,
     value: string,
-    contentType: string
+    contentType: string,
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       db.run(
@@ -56,7 +56,7 @@ export default class SQLiteObjectStore extends ObjectStore {
           } else {
             resolve();
           }
-        }
+        },
       );
     });
   }

@@ -1,6 +1,6 @@
 const MAX_NUM_THREADS = 128;
 
-type MergeRange = { start: number; end: number };
+type MergeRange = {start: number; end: number};
 
 export class RankMap {
   private values = new Map<string, number>();
@@ -24,7 +24,7 @@ export class RankMap {
   }
 
   public keys() {
-    return Array.from(this.values.keys()).map((k) => Buffer.from(k));
+    return Array.from(this.values.keys()).map(k => Buffer.from(k));
   }
 
   public inverted() {
@@ -37,7 +37,7 @@ export class RankMap {
 }
 
 function bytePairMerge(piece: Uint8Array, ranks: RankMap): MergeRange[] {
-  let parts: MergeRange[] = Array.from({ length: piece.length }, (_, i) => ({
+  let parts: MergeRange[] = Array.from({length: piece.length}, (_, i) => ({
     start: i,
     end: i + 1,
   }));
@@ -57,7 +57,7 @@ function bytePairMerge(piece: Uint8Array, ranks: RankMap): MergeRange[] {
     }
     if (minRank !== null) {
       const [_, i] = minRank;
-      parts[i] = { start: parts[i].start, end: parts[i + 1].end };
+      parts[i] = {start: parts[i].start, end: parts[i + 1].end};
       parts.splice(i + 1, 1);
     } else {
       break;
@@ -71,7 +71,7 @@ function bytePairEncode(piece: Uint8Array, ranks: RankMap): number[] {
     return [ranks.get(piece)!];
   }
   return bytePairMerge(piece, ranks).map(
-    (p) => ranks.get(piece.slice(p.start, p.end))!
+    p => ranks.get(piece.slice(p.start, p.end))!,
   );
 }
 
@@ -79,7 +79,7 @@ function bytePairSplit(piece: Uint8Array, ranks: RankMap): Uint8Array[] {
   if (piece.length === 1) {
     return [piece];
   }
-  return bytePairMerge(piece, ranks).map((p) => piece.slice(p.start, p.end));
+  return bytePairMerge(piece, ranks).map(p => piece.slice(p.start, p.end));
 }
 
 export class CoreBPE {
@@ -94,12 +94,12 @@ export class CoreBPE {
   constructor(
     encoder: RankMap,
     specialTokensEncoder: Map<string, number>,
-    regex: RegExp
+    regex: RegExp,
   ) {
     const specialRegex = new RegExp(
       Array.from(specialTokensEncoder.keys())
-        .map((s) => s.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"))
-        .join("|")
+        .map(s => s.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'))
+        .join('|'),
     );
 
     const decoder: Map<number, Uint8Array> = encoder.inverted();
@@ -108,7 +108,7 @@ export class CoreBPE {
       Array.from(specialTokensEncoder.entries()).map(([k, v]) => [
         v,
         new Uint8Array(Buffer.from(k)),
-      ])
+      ]),
     );
     const sortedTokenBytes: Uint8Array[] = Array.from(encoder.keys());
     sortedTokenBytes.sort((a, b) => Buffer.compare(a, b));
@@ -158,7 +158,7 @@ export class CoreBPE {
 
   private _encodeNative(
     text: string,
-    allowedSpecial: Set<string>
+    allowedSpecial: Set<string>,
   ): [number[], number] {
     const specialRegex = this._getTlSpecialRegex();
     const regex = this._getTlRegex();
@@ -213,9 +213,9 @@ export class CoreBPE {
 
   encodeWithUnstable(
     text: string,
-    allowedSpecial: Set<string>
+    allowedSpecial: Set<string>,
   ): [number[], Set<number[]>] {
-    throw new Error("Not implemented");
+    throw new Error('Not implemented');
   }
 
   encodeSingleToken(piece: Uint8Array): number {
@@ -223,11 +223,11 @@ export class CoreBPE {
     if (token !== undefined) {
       return token;
     }
-    const pieceStr = Buffer.from(piece).toString("utf-8");
+    const pieceStr = Buffer.from(piece).toString('utf-8');
     if (this.specialTokensEncoder.has(pieceStr)) {
       return this.specialTokensEncoder.get(pieceStr)!;
     }
-    throw new Error("Key not found");
+    throw new Error('Key not found');
   }
 
   encodeSinglePiece(piece: Uint8Array): number[] {
@@ -248,7 +248,7 @@ export class CoreBPE {
     if (bytes !== undefined) {
       return bytes;
     }
-    throw new Error("Key not found");
+    throw new Error('Key not found');
   }
 
   tokenByteValues(): Uint8Array[] {

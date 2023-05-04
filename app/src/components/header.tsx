@@ -1,25 +1,25 @@
-import styled from "@emotion/styled";
-import Helmet from "react-helmet";
-import { FormattedMessage, useIntl } from "react-intl";
-import { useSpotlight } from "@mantine/spotlight";
-import { Burger, Button, ButtonProps } from "@mantine/core";
-import { useCallback, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAppContext } from "../core/context";
-import { backend } from "../core/backend";
-import { MenuItem, secondaryMenu } from "../menus";
-import { useAppDispatch, useAppSelector } from "../store";
-import { setTab } from "../store/settings-ui";
-import { selectSidebarOpen, toggleSidebar } from "../store/sidebar";
-import { openLoginModal, openSignupModal } from "../store/ui";
-import { useOption } from "../core/options/use-option";
-import { useHotkeys } from "@mantine/hooks";
+import styled from '@emotion/styled';
+import Helmet from 'react-helmet';
+import {FormattedMessage, useIntl} from 'react-intl';
+import {useSpotlight} from '@mantine/spotlight';
+import {Burger, Button, ButtonProps} from '@mantine/core';
+import {useCallback, useMemo, useState} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
+import {useAppContext} from '../core/context';
+import {backend} from '../core/backend';
+import {MenuItem, secondaryMenu} from '../menus';
+import {useAppDispatch, useAppSelector} from '../store';
+import {setTab} from '../store/settings-ui';
+import {selectSidebarOpen, toggleSidebar} from '../store/sidebar';
+import {openLoginModal, openSignupModal} from '../store/ui';
+import {useOption} from '../core/options/use-option';
+import {useHotkeys} from '@mantine/hooks';
 
 const Banner = styled.div`
   background: rgba(224, 49, 49, 0.2);
   color: white;
   text-align: center;
-  font-family: "Work Sans", sans-serif;
+  font-family: 'Work Sans', sans-serif;
   font-size: 80%;
   padding: 0.5rem;
   cursor: pointer;
@@ -33,7 +33,7 @@ const HeaderContainer = styled.div`
   padding: 0.5rem 1rem;
   min-height: 2.618rem;
   background: rgba(0, 0, 0, 0);
-  font-family: "Work Sans", sans-serif;
+  font-family: 'Work Sans', sans-serif;
 
   &.shaded {
     background: rgba(0, 0, 0, 0.2);
@@ -45,7 +45,7 @@ const HeaderContainer = styled.div`
       order: -1;
     }
 
-    font-family: "Work Sans", sans-serif;
+    font-family: 'Work Sans', sans-serif;
     font-size: 1rem;
     line-height: 1.3;
 
@@ -106,7 +106,7 @@ const HeaderContainer = styled.div`
 const SubHeaderContainer = styled.div`
   display: flex;
   flex-direction: row;
-  font-family: "Work Sans", sans-serif;
+  font-family: 'Work Sans', sans-serif;
   line-height: 1.7;
   opacity: 0.7;
   margin: 0.5rem 0.5rem 0 0.5rem;
@@ -127,15 +127,15 @@ const SubHeaderContainer = styled.div`
 `;
 
 function HeaderButton(
-  props: ButtonProps & { icon?: string; onClick?: any; children?: any }
+  props: ButtonProps & {icon?: string; onClick?: any; children?: any},
 ) {
   return (
     <Button
       size="xs"
-      variant={props.variant || "subtle"}
+      variant={props.variant || 'subtle'}
       onClick={props.onClick}
     >
-      {props.icon && <i className={"fa fa-" + props.icon} />}
+      {props.icon && <i className={'fa fa-' + props.icon} />}
       {props.children && <span>{props.children}</span>}
     </Button>
   );
@@ -153,19 +153,19 @@ export default function Header(props: HeaderProps) {
   const navigate = useNavigate();
   const spotlight = useSpotlight();
   const [loading, setLoading] = useState(false);
-  const [openAIApiKey] = useOption<string>("openai", "apiKey");
+  const [openAIApiKey] = useOption<string>('openai', 'apiKey');
   const dispatch = useAppDispatch();
   const intl = useIntl();
 
   const sidebarOpen = useAppSelector(selectSidebarOpen);
   const onBurgerClick = useCallback(
     () => dispatch(toggleSidebar()),
-    [dispatch]
+    [dispatch],
   );
 
   const burgerLabel = sidebarOpen
-    ? intl.formatMessage({ defaultMessage: "Close sidebar" })
-    : intl.formatMessage({ defaultMessage: "Open sidebar" });
+    ? intl.formatMessage({defaultMessage: 'Close sidebar'})
+    : intl.formatMessage({defaultMessage: 'Open sidebar'});
 
   const onNewChat = useCallback(async () => {
     setLoading(true);
@@ -173,17 +173,17 @@ export default function Header(props: HeaderProps) {
     setLoading(false);
     setTimeout(
       () =>
-        document.querySelector<HTMLTextAreaElement>("#message-input")?.focus(),
-      100
+        document.querySelector<HTMLTextAreaElement>('#message-input')?.focus(),
+      100,
     );
   }, [navigate]);
 
   const openSettings = useCallback(() => {
-    dispatch(setTab(openAIApiKey ? "chat" : "user"));
+    dispatch(setTab(openAIApiKey ? 'chat' : 'user'));
   }, [openAIApiKey, dispatch]);
 
   const signIn = useCallback(() => {
-    if ((window as any).AUTH_PROVIDER !== "local") {
+    if ((window as any).AUTH_PROVIDER !== 'local') {
       backend.current?.signIn();
     } else {
       dispatch(openLoginModal());
@@ -191,14 +191,14 @@ export default function Header(props: HeaderProps) {
   }, [dispatch]);
 
   const signUp = useCallback(() => {
-    if ((window as any).AUTH_PROVIDER !== "local") {
+    if ((window as any).AUTH_PROVIDER !== 'local') {
       backend.current?.signIn();
     } else {
       dispatch(openSignupModal());
     }
   }, [dispatch]);
 
-  useHotkeys([["c", onNewChat]]);
+  useHotkeys([['c', onNewChat]]);
 
   const header = useMemo(
     () => (
@@ -208,13 +208,13 @@ export default function Header(props: HeaderProps) {
             You have been signed out. Click here to sign back in.
           </Banner>
         )}
-        <HeaderContainer className={context.isHome ? "shaded" : ""}>
+        <HeaderContainer className={context.isHome ? 'shaded' : ''}>
           <Helmet>
             <title>
-              {props.title ? `${props.title} - ` : ""}
+              {props.title ? `${props.title} - ` : ''}
               {intl.formatMessage({
-                defaultMessage: "Chat with GPT - Unofficial ChatGPT app",
-                description: "HTML title tag",
+                defaultMessage: 'Chat with GPT - Unofficial ChatGPT app',
+                description: 'HTML title tag',
               })}
             </title>
           </Helmet>
@@ -229,8 +229,8 @@ export default function Header(props: HeaderProps) {
           {context.isHome && (
             <h2>
               {intl.formatMessage({
-                defaultMessage: "Chat with GPT",
-                description: "app name",
+                defaultMessage: 'Chat with GPT',
+                description: 'app name',
               })}
             </h2>
           )}
@@ -240,7 +240,7 @@ export default function Header(props: HeaderProps) {
           {backend.current &&
             !props.share &&
             props.canShare &&
-            typeof navigator.share !== "undefined" && (
+            typeof navigator.share !== 'undefined' && (
               <HeaderButton icon="share" onClick={props.onShare}>
                 <FormattedMessage
                   defaultMessage="Share"
@@ -250,7 +250,7 @@ export default function Header(props: HeaderProps) {
             )}
           {backend.current && !context.authenticated && (
             <HeaderButton
-              onClick={localStorage.getItem("registered") ? signIn : signUp}
+              onClick={localStorage.getItem('registered') ? signIn : signUp}
             >
               <FormattedMessage
                 defaultMessage="Sign in <h>to sync</h>"
@@ -294,13 +294,13 @@ export default function Header(props: HeaderProps) {
       spotlight.openSpotlight,
       signIn,
       signUp,
-    ]
+    ],
   );
 
   return header;
 }
 
-function SubHeaderMenuItem(props: { item: MenuItem }) {
+function SubHeaderMenuItem(props: {item: MenuItem}) {
   return (
     <Button
       variant="subtle"
@@ -311,7 +311,7 @@ function SubHeaderMenuItem(props: { item: MenuItem }) {
       target="_blank"
       key={props.item.link}
     >
-      {props.item.icon && <i className={"fa fa-" + props.item.icon} />}
+      {props.item.icon && <i className={'fa fa-' + props.item.icon} />}
       <span>{props.item.label}</span>
     </Button>
   );
@@ -322,12 +322,12 @@ export function SubHeader(props: any) {
     () => (
       <SubHeaderContainer>
         <div className="spacer" />
-        {secondaryMenu.map((item) => (
+        {secondaryMenu.map(item => (
           <SubHeaderMenuItem item={item} key={item.link} />
         ))}
       </SubHeaderContainer>
     ),
-    []
+    [],
   );
 
   return elem;

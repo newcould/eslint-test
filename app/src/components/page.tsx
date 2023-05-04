@@ -1,12 +1,12 @@
-import styled from "@emotion/styled";
-import { SpotlightProvider } from "@mantine/spotlight";
-import { useChatSpotlightProps } from "../spotlight";
-import { LoginModal, CreateAccountModal } from "./auth-modals";
-import Header, { HeaderProps, SubHeader } from "./header";
-import MessageInput from "./input";
-import SettingsDrawer from "./settings";
-import Sidebar from "./sidebar";
-import AudioControls from "./tts-controls";
+import styled from '@emotion/styled';
+import {SpotlightProvider} from '@mantine/spotlight';
+import {useChatSpotlightProps} from '../spotlight';
+import {LoginModal, CreateAccountModal} from './auth-modals';
+import Header, {HeaderProps, SubHeader} from './header';
+import MessageInput from './input';
+import SettingsDrawer from './settings';
+import Sidebar from './sidebar';
+import AudioControls from './tts-controls';
 
 const Container = styled.div`
   position: absolute;
@@ -89,7 +89,7 @@ export function Page(props: {
           {props.showSubHeader && <SubHeader />}
           {props.children}
           <AudioControls />
-          <MessageInput key={localStorage.getItem("openai-api-key")} />
+          <MessageInput key={localStorage.getItem('openai-api-key')} />
           <SettingsDrawer />
           <LoginModal />
           <CreateAccountModal />

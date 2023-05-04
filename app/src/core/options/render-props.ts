@@ -1,5 +1,5 @@
-import type { OptionsManager } from ".";
-import type { Context } from "../context";
+import type {OptionsManager} from '.';
+import type {Context} from '../context';
 
 /**
  * Represents the properties used to render an option in the settings UI.
@@ -17,13 +17,13 @@ import type { Context } from "../context";
  */
 export interface RenderProps {
   type:
-    | "text"
-    | "textarea"
-    | "select"
-    | "number"
-    | "slider"
-    | "checkbox"
-    | "password";
+    | 'text'
+    | 'textarea'
+    | 'select'
+    | 'number'
+    | 'slider'
+    | 'checkbox'
+    | 'password';
 
   label?: any;
   description?: any;
@@ -38,7 +38,7 @@ export interface RenderProps {
   max?: number;
 
   // Select input options property
-  options?: Array<{ label: string; value: string }>;
+  options?: Array<{label: string; value: string}>;
 }
 
 /**
@@ -48,5 +48,5 @@ export interface RenderProps {
 export type RenderPropsBuilder = (
   value: any,
   options: OptionsManager,
-  context: Context
+  context: Context,
 ) => RenderProps;

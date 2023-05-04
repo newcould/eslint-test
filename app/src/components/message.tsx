@@ -1,15 +1,15 @@
-import styled from "@emotion/styled";
-import { Button, CopyButton, Loader, Textarea } from "@mantine/core";
+import styled from '@emotion/styled';
+import {Button, CopyButton, Loader, Textarea} from '@mantine/core';
 
-import { Message } from "../core/chat/types";
-import { share } from "../core/utils";
-import { TTSButton } from "./tts-button";
-import { Markdown } from "./markdown";
-import { useAppContext } from "../core/context";
-import { useCallback, useMemo, useState } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
-import { useAppSelector } from "../store";
-import { selectSettingsTab } from "../store/settings-ui";
+import {Message} from '../core/chat/types';
+import {share} from '../core/utils';
+import {TTSButton} from './tts-button';
+import {Markdown} from './markdown';
+import {useAppContext} from '../core/context';
+import {useCallback, useMemo, useState} from 'react';
+import {FormattedMessage, useIntl} from 'react-intl';
+import {useAppSelector} from '../store';
+import {selectSettingsTab} from '../store/settings-ui';
 
 // hide for everyone but screen readers
 const SROnly = styled.span`
@@ -48,7 +48,7 @@ const Container = styled.div`
   }
 
   .content {
-    font-family: "Open Sans", sans-serif;
+    font-family: 'Open Sans', sans-serif;
     margin-top: 0rem;
     max-width: 100%;
 
@@ -99,7 +99,7 @@ const Container = styled.div`
     code {
       &,
       * {
-        font-family: "Fira Code", monospace !important;
+        font-family: 'Fira Code', monospace !important;
       }
       vertical-align: bottom;
     }
@@ -136,7 +136,7 @@ const Container = styled.div`
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    font-family: "Work Sans", sans-serif;
+    font-family: 'Work Sans', sans-serif;
     font-size: 0.8rem;
     font-weight: 400;
     opacity: 0.6;
@@ -216,9 +216,9 @@ function InlineLoader() {
       variant="dots"
       size="xs"
       style={{
-        marginLeft: "1rem",
-        position: "relative",
-        top: "-0.2rem",
+        marginLeft: '1rem',
+        position: 'relative',
+        top: '-0.2rem',
       }}
     />
   );
@@ -231,7 +231,7 @@ export default function MessageComponent(props: {
 }) {
   const context = useAppContext();
   const [editing, setEditing] = useState(false);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('');
   const intl = useIntl();
 
   const tab = useAppSelector(selectSettingsTab);
@@ -239,80 +239,80 @@ export default function MessageComponent(props: {
   const getRoleName = useCallback(
     (role: string, share = false) => {
       switch (role) {
-        case "user":
+        case 'user':
           if (share) {
             return intl.formatMessage({
-              id: "role-user-formal",
-              defaultMessage: "User",
+              id: 'role-user-formal',
+              defaultMessage: 'User',
               description:
-                "Label that is shown above messages written by the user (as opposed to the AI) for publicly shared conversation (third person, formal).",
+                'Label that is shown above messages written by the user (as opposed to the AI) for publicly shared conversation (third person, formal).',
             });
           } else {
             return intl.formatMessage({
-              id: "role-user",
-              defaultMessage: "You",
+              id: 'role-user',
+              defaultMessage: 'You',
               description:
                 "Label that is shown above messages written by the user (as opposed to the AI) in the user's own chat sessions (first person).",
             });
           }
           break;
-        case "assistant":
+        case 'assistant':
           return intl.formatMessage({
-            id: "role-chatgpt",
-            defaultMessage: "ChatGPT",
+            id: 'role-chatgpt',
+            defaultMessage: 'ChatGPT',
             description:
-              "Label that is shown above messages written by the AI (as opposed to the user)",
+              'Label that is shown above messages written by the AI (as opposed to the user)',
           });
-        case "system":
+        case 'system':
           return intl.formatMessage({
-            id: "role-system",
-            defaultMessage: "System",
+            id: 'role-system',
+            defaultMessage: 'System',
             description:
-              "Label that is shown above messages inserted into the conversation automatically by the system (as opposed to either the user or AI)",
+              'Label that is shown above messages inserted into the conversation automatically by the system (as opposed to either the user or AI)',
           });
         default:
           return role;
       }
     },
-    [intl]
+    [intl],
   );
 
   const elem = useMemo(() => {
-    if (props.message.role === "system") {
+    if (props.message.role === 'system') {
       return null;
     }
 
     return (
-      <Container className={"message by-" + props.message.role}>
+      <Container className={'message by-' + props.message.role}>
         <div className="inner">
           <div className="metadata">
             <span>
               <strong>
                 {getRoleName(props.message.role, props.share)}
-                {props.message.model === "gpt-4" && " (GPT 4)"}
+                {props.message.model === 'gpt-4' && ' (GPT 4)'}
                 <SROnly>:</SROnly>
               </strong>
-              {props.message.role === "assistant" &&
+              {props.message.role === 'assistant' &&
                 props.last &&
                 !props.message.done && <InlineLoader />}
             </span>
             <TTSButton
               id={props.message.id}
-              selector={".content-" + props.message.id}
+              selector={'.content-' + props.message.id}
               complete={!!props.message.done}
               autoplay={
                 props.last && context.chat.lastReplyID === props.message.id
               }
             />
-            <div style={{ flexGrow: 1 }} />
+            <div style={{flexGrow: 1}} />
             <CopyButton value={props.message.content}>
-              {({ copy, copied }) => (
+              {({copy, copied}) => (
                 <Button
                   variant="subtle"
                   size="sm"
                   compact
                   onClick={copy}
-                  style={{ marginLeft: "1rem" }}
+                  style={{marginLeft: '1rem'}}
                 >
                   <i className="fa fa-clipboard" />
                   {copied ? (
@@ -331,7 +331,7 @@ export default function MessageComponent(props: {
                 </Button>
               )}
             </CopyButton>
-            {typeof navigator.share !== "undefined" && (
+            {typeof navigator.share !== 'undefined' && (
               <Button
                 variant="subtle"
                 size="sm"
@@ -347,14 +347,14 @@ export default function MessageComponent(props: {
                 </span>
               </Button>
             )}
-            {!context.isShare && props.message.role === "user" && (
+            {!context.isShare && props.message.role === 'user' && (
               <Button
                 variant="subtle"
                 size="sm"
                 compact
                 onClick={() => {
                   setContent(props.message.content);
-                  setEditing((v) => !v);
+                  setEditing(v => !v);
                 }}
               >
                 <i className="fa fa-edit" />
@@ -373,7 +373,7 @@ export default function MessageComponent(props: {
                 </span>
               </Button>
             )}
-            {!context.isShare && props.message.role === "assistant" && (
+            {!context.isShare && props.message.role === 'assistant' && (
               <Button
                 variant="subtle"
                 size="sm"
@@ -393,14 +393,14 @@ export default function MessageComponent(props: {
           {!editing && (
             <Markdown
               content={props.message.content}
-              className={"content content-" + props.message.id}
+              className={'content content-' + props.message.id}
             />
           )}
           {editing && (
             <Editor>
               <Textarea
                 value={content}
-                onChange={(e) => setContent(e.currentTarget.value)}
+                onChange={e => setContent(e.currentTarget.value)}
                 autosize={true}
               />
               <Button

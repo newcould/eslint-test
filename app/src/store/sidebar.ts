@@ -1,12 +1,12 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from ".";
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import type {RootState} from '.';
 
 const initialState = {
   open: false,
 };
 
 export const uiSlice = createSlice({
-  name: "sidebar",
+  name: 'sidebar',
   initialState,
   reducers: {
     openSidebar(state) {
@@ -21,7 +21,7 @@ export const uiSlice = createSlice({
   },
 });
 
-export const { openSidebar, closeSidebar, toggleSidebar } = uiSlice.actions;
+export const {openSidebar, closeSidebar, toggleSidebar} = uiSlice.actions;
 
 export const selectSidebarOpen = (state: RootState) => state.sidebar.open;
 

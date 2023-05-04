@@ -1,9 +1,9 @@
-import { Button } from "@mantine/core";
-import { useCallback, useEffect, useState } from "react";
-import { FormattedMessage } from "react-intl";
-import { useTTS } from "../core/tts/use-tts";
-import { useAppDispatch } from "../store";
-import { setTabAndOption } from "../store/settings-ui";
+import {Button} from '@mantine/core';
+import {useCallback, useEffect, useState} from 'react';
+import {FormattedMessage} from 'react-intl';
+import {useTTS} from '../core/tts/use-tts';
+import {useAppDispatch} from '../store';
+import {setTabAndOption} from '../store/settings-ui';
 
 const autoplayed = new Set<string>();
 
@@ -31,7 +31,7 @@ export function TTSButton(props: {
     setClicked(true);
 
     if (!voice) {
-      dispatch(setTabAndOption({ tab: "speech", option: "service" }));
+      dispatch(setTabAndOption({tab: 'speech', option: 'service'}));
       return;
     }
 
@@ -58,7 +58,7 @@ export function TTSButton(props: {
       voice &&
       !clicked &&
       !autoplayed.has(props.id) &&
-      document.visibilityState === "visible"
+      document.visibilityState === 'visible'
     ) {
       autoplayed.add(props.id);
       setSourceElement(props.id, document.querySelector(props.selector)!);

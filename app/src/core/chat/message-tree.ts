@@ -1,4 +1,4 @@
-import { Message } from "./types";
+import {Message} from './types';
 
 /**
  * MessageNode interface that extends the Message type and includes parent and replies properties.
@@ -43,7 +43,7 @@ export class MessageTree {
    */
   public get roots(): MessageNode[] {
     return Array.from(this.messageNodes.values()).filter(
-      (messageNode) => messageNode.parent === null
+      messageNode => messageNode.parent === null,
     );
   }
 
@@ -53,7 +53,7 @@ export class MessageTree {
    */
   public get leafs(): MessageNode[] {
     return Array.from(this.messageNodes.values()).filter(
-      (messageNode) => messageNode.replies.size === 0
+      messageNode => messageNode.replies.size === 0,
     );
   }
 
@@ -85,13 +85,13 @@ export class MessageTree {
    */
   public addMessage(
     inputMessage: Message,
-    content: string | undefined = "",
-    done: boolean | undefined = false
+    content: string | undefined = '',
+    done: boolean | undefined = false,
   ): void {
     const message = {
       ...inputMessage,
-      content: content || inputMessage.content || "",
-      done: typeof done === "boolean" ? done : inputMessage.done,
+      content: content || inputMessage.content || '',
+      done: typeof done === 'boolean' ? done : inputMessage.done,
     };
 
     if (this.messageNodes.get(message.id)?.content) {
@@ -183,9 +183,9 @@ export class MessageTree {
    * Method to serialize the message tree into an array of message nodes, excluding parent and replies properties.
    * @returns {Omit<MessageNode, 'parent' | 'replies'>[]} - An array of serialized message nodes.
    */
-  public serialize(): Omit<MessageNode, "parent" | "replies">[] {
-    return Array.from(this.messageNodes.values()).map((messageNode) => {
-      const n: any = { ...messageNode };
+  public serialize(): Omit<MessageNode, 'parent' | 'replies'>[] {
+    return Array.from(this.messageNodes.values()).map(messageNode => {
+      const n: any = {...messageNode};
       delete n.parent;
       delete n.replies;
       return n;

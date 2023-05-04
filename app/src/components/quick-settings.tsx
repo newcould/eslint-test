@@ -1,11 +1,11 @@
-import styled from "@emotion/styled";
-import { useAppContext } from "../core/context";
-import { Option } from "../core/options/option";
-import { useOption } from "../core/options/use-option";
-import { Button } from "@mantine/core";
-import { useAppDispatch, useAppSelector } from "../store";
-import { useCallback } from "react";
-import { setTabAndOption } from "../store/settings-ui";
+import styled from '@emotion/styled';
+import {useAppContext} from '../core/context';
+import {Option} from '../core/options/option';
+import {useOption} from '../core/options/use-option';
+import {Button} from '@mantine/core';
+import {useAppDispatch, useAppSelector} from '../store';
+import {useCallback} from 'react';
+import {setTabAndOption} from '../store/settings-ui';
 
 const Container = styled.div`
   margin: 0.5rem -0.5rem;
@@ -26,17 +26,14 @@ const Container = styled.div`
   }
 `;
 
-export function QuickSettingsButton(props: {
-  groupID: string;
-  option: Option;
-}) {
+export function QuickSettingsButton(props: {groupID: string; option: Option}) {
   const context = useAppContext();
   const dispatch = useAppDispatch();
 
   const [value] = useOption(
     props.groupID,
     props.option.id,
-    context.id || undefined
+    context.id || undefined,
   );
 
   const onClick = useCallback(() => {
@@ -44,7 +41,7 @@ export function QuickSettingsButton(props: {
       setTabAndOption({
         tab: props.option.displayOnSettingsScreen,
         option: props.option.id,
-      })
+      }),
     );
   }, [props.groupID, props.option.id, dispatch]);
 
@@ -53,7 +50,7 @@ export function QuickSettingsButton(props: {
 
   if (labelBuilder) {
     label =
-      typeof labelBuilder === "string"
+      typeof labelBuilder === 'string'
         ? labelBuilder
         : labelBuilder(value, context.chat.options, context);
   }
@@ -70,16 +67,16 @@ export default function QuickSettings(props: any) {
   const options = context.chat.getQuickSettings();
 
   if (!options.length) {
-    return <div style={{ height: "1rem" }} />;
+    return <div style={{height: '1rem'}} />;
   }
 
   return (
     <Container>
-      {options.map((o) => (
+      {options.map(o => (
         <QuickSettingsButton
           groupID={o.groupID}
           option={o.option}
-          key={o.groupID + "." + o.option.id}
+          key={o.groupID + '.' + o.option.id}
         />
       ))}
     </Container>

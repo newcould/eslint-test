@@ -4,6 +4,6 @@ export default abstract class ObjectStore {
   public abstract put(
     key: string,
     value: string,
-    contentType: string
+    contentType: string,
   ): Promise<void>;
 }

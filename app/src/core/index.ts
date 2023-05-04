@@ -1,27 +1,27 @@
-import { BroadcastChannel } from "broadcast-channel";
-import EventEmitter from "events";
-import { v4 as uuidv4 } from "uuid";
-import { Chat, Message, Parameters, UserSubmittedMessage } from "./chat/types";
-import * as Y from "yjs";
-import { IndexeddbPersistence } from "y-indexeddb";
-import { YChatDoc } from "./chat/y-chat";
-import { loadFromPreviousVersion as loadSavedChatsFromPreviousVersion } from "./chat/chat-persistance";
-import { Search } from "./search";
-import { ReplyRequest } from "./chat/create-reply";
-import { OptionsManager } from "./options";
-import { Option } from "./options/option";
-import { pluginMetadata } from "./plugins/metadata";
-import { pluginRunner } from "./plugins/plugin-runner";
-import { createBasicPluginContext } from "./plugins/plugin-context";
+import {BroadcastChannel} from 'broadcast-channel';
+import EventEmitter from 'events';
+import {v4 as uuidv4} from 'uuid';
+import {Chat, Message, Parameters, UserSubmittedMessage} from './chat/types';
+import * as Y from 'yjs';
+import {IndexeddbPersistence} from 'y-indexeddb';
+import {YChatDoc} from './chat/y-chat';
+import {loadFromPreviousVersion as loadSavedChatsFromPreviousVersion} from './chat/chat-persistance';
+import {Search} from './search';
+import {ReplyRequest} from './chat/create-reply';
+import {OptionsManager} from './options';
+import {Option} from './options/option';
+import {pluginMetadata} from './plugins/metadata';
+import {pluginRunner} from './plugins/plugin-runner';
+import {createBasicPluginContext} from './plugins/plugin-context';
 
-export const channel = new BroadcastChannel("chats");
+export const channel = new BroadcastChannel('chats');
 
 export class ChatManager extends EventEmitter {
   public doc!: YChatDoc;
   private provider!: IndexeddbPersistence;
   private search!: Search;
   public options!: OptionsManager;
-  private username: string | null = "anonymous";
+  private username: string | null = 'anonymous';
 
   private activeReplies = new Map<string, ReplyRequest>();
   private changedIDs = new Set<string>();
@@ -32,16 +32,16 @@ export class ChatManager extends EventEmitter {
 
     this.setMaxListeners(1000);
 
-    console.log("initializing chat manager");
+    console.log('initializing chat manager');
 
-    this.doc = this.attachYDoc("anonymous");
+    this.doc = this.attachYDoc('anonymous');
 
-    loadSavedChatsFromPreviousVersion(this.doc).then(() => this.emit("update"));
+    loadSavedChatsFromPreviousVersion(this.doc).then(() => this.emit('update'));
 
     setInterval(() => this.emitChanges());
 
-    channel.onmessage = (message) => {
-      if (message.type === "y-update") {
+    channel.onmessage = message => {
+      if (message.type === 'y-update') {
         this.applyYUpdate(message.data);
       }
     };
@@ -57,7 +57,7 @@ export class ChatManager extends EventEmitter {
   }
 
   private attachYDoc(username: string) {
-    console.log("attaching y-doc for " + username);
+    console.log('attaching y-doc for ' + username);
 
     // detach current doc
     const doc = this.doc as YChatDoc | undefined;
@@ -69,41 +69,41 @@ export class ChatManager extends EventEmitter {
 
     // attach new doc
     this.doc = new YChatDoc();
-    this.doc.on("update", (chatID) => this.changedIDs.add(chatID));
-    this.doc.root.on("update", (update, origin) => {
-      if (!(origin instanceof IndexeddbPersistence) && origin !== "sync") {
-        this.emit("y-update", update);
-        channel.postMessage({ type: "y-update", data: update });
+    this.doc.on('update', chatID => this.changedIDs.add(chatID));
+    this.doc.root.on('update', (update, origin) => {
+      if (!(origin instanceof IndexeddbPersistence) && origin !== 'sync') {
+        this.emit('y-update', update);
+        channel.postMessage({type: 'y-update', data: update});
       } else {
-        console.log("IDB/sync update");
+        console.log('IDB/sync update');
       }
     });
     this.search = new Search(this);
 
     this.options = new OptionsManager(this.doc, pluginMetadata);
-    this.options.on("update", (...args) =>
-      this.emit("plugin-options-update", ...args)
+    this.options.on('update', (...args) =>
+      this.emit('plugin-options-update', ...args),
     );
 
     // connect new doc to persistance, scoped to the current username
     this.provider = new IndexeddbPersistence(
-      "chats:" + username,
-      this.doc.root
+      'chats:' + username,
+      this.doc.root,
     );
     this.provider.whenSynced.then(() => {
-      this.doc.getChatIDs().map((id) => this.emit(id));
-      this.emit("update");
-      this.doc.emit("ready");
+      this.doc.getChatIDs().map(id => this.emit(id));
+      this.emit('update');
+      this.doc.emit('ready');
       this.options.reloadOptions();
     });
 
     pluginRunner(
-      "init",
-      (pluginID) => createBasicPluginContext(pluginID, this.options),
-      (plugin) => plugin.initialize()
+      'init',
+      pluginID => createBasicPluginContext(pluginID, this.options),
+      plugin => plugin.initialize(),
     );
 
-    if (username !== "anonymous") {
+    if (username !== 'anonymous') {
       // import chats from the anonymous doc after signing in
       provider?.whenSynced.then(() => {
         if (doc) {
@@ -130,7 +130,7 @@ export class ChatManager extends EventEmitter {
     }
 
     if (ids.length) {
-      this.emit("update");
+      this.emit('update');
     }
   }
 
@@ -138,7 +138,7 @@ export class ChatManager extends EventEmitter {
     const chat = this.doc.getYChat(userSubmittedMessage.chatID);
 
     if (!chat) {
-      throw new Error("Chat not found");
+      throw new Error('Chat not found');
     }
 
     const message: Message = {
@@ -146,7 +146,7 @@ export class ChatManager extends EventEmitter {
       parentID: userSubmittedMessage.parentID,
       chatID: userSubmittedMessage.chatID,
       timestamp: Date.now(),
-      role: "user",
+      role: 'user',
       content: userSubmittedMessage.content,
       done: true,
     };
@@ -155,7 +155,7 @@ export class ChatManager extends EventEmitter {
 
     const messages: Message[] = this.doc.getMessagesPrecedingMessage(
       message.chatID,
-      message.id
+      message.id,
     );
     messages.push(message);
 
@@ -165,7 +165,7 @@ export class ChatManager extends EventEmitter {
   public async regenerate(message: Message, requestedParameters: Parameters) {
     const messages = this.doc.getMessagesPrecedingMessage(
       message.chatID,
-      message.id
+      message.id,
     );
     await this.getReply(messages, requestedParameters);
   }
@@ -177,7 +177,7 @@ export class ChatManager extends EventEmitter {
     const chat = this.doc.getYChat(latestMessage.chatID);
 
     if (!chat) {
-      throw new Error("Chat not found");
+      throw new Error('Chat not found');
     }
 
     const message: Message = {
@@ -185,9 +185,9 @@ export class ChatManager extends EventEmitter {
       parentID,
       chatID,
       timestamp: Date.now(),
-      role: "assistant",
+      role: 'assistant',
       model: requestedParameters.model,
-      content: "",
+      content: '',
     };
 
     this.lastReplyID = message.id;
@@ -200,9 +200,9 @@ export class ChatManager extends EventEmitter {
       messages,
       message.id,
       requestedParameters,
-      this.options
+      this.options,
     );
-    request.on("done", () => this.activeReplies.delete(message.id));
+    request.on('done', () => this.activeReplies.delete(message.id));
     request.execute();
 
     this.activeReplies.set(message.id, request);
@@ -226,7 +226,7 @@ export class ChatManager extends EventEmitter {
   }
 
   public all(): Chat[] {
-    return this.doc.getChatIDs().map((id) => this.get(id));
+    return this.doc.getChatIDs().map(id => this.get(id));
   }
 
   public deleteChat(id: string, broadcast = true) {
@@ -244,7 +244,7 @@ export class ChatManager extends EventEmitter {
     for (const description of pluginMetadata) {
       pluginOptions[description.id] = this.options.getAllOptions(
         description.id,
-        chatID
+        chatID,
       );
     }
 
@@ -255,7 +255,7 @@ export class ChatManager extends EventEmitter {
     pluginID: string,
     optionID: string,
     value: any,
-    chatID?: string
+    chatID?: string,
   ) {
     this.options.setOption(pluginID, optionID, value, chatID);
   }
@@ -264,18 +264,18 @@ export class ChatManager extends EventEmitter {
     this.options.resetOptions(pluginID, chatID);
   }
 
-  public getQuickSettings(): Array<{ groupID: string; option: Option }> {
-    const options = this.options.getAllOptions("quick-settings");
+  public getQuickSettings(): Array<{groupID: string; option: Option}> {
+    const options = this.options.getAllOptions('quick-settings');
     return Object.keys(options)
-      .filter((key) => options[key])
-      .map((key) => {
-        const groupID = key.split("--")[0];
-        const optionID = key.split("--")[1];
+      .filter(key => options[key])
+      .map(key => {
+        const groupID = key.split('--')[0];
+        const optionID = key.split('--')[1];
         return {
           groupID,
           option: this.options.findOption(groupID, optionID)!,
         };
       })
-      .filter((o) => !!o.option);
+      .filter(o => !!o.option);
   }
 }

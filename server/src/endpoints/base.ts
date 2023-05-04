@@ -1,6 +1,6 @@
-import express from "express";
-import ChatServer from "../index";
-import ExpirySet from "expiry-set";
+import express from 'express';
+import ChatServer from '../index';
+import ExpirySet from 'expiry-set';
 
 const recentUsers = new ExpirySet<string>(1000 * 60 * 5);
 export function getActiveUsersInLast5Minutes() {
@@ -11,7 +11,7 @@ export default abstract class RequestHandler {
   constructor(
     public context: ChatServer,
     private req: express.Request,
-    private res: express.Response
+    private res: express.Response,
   ) {
     this.callback().then(() => {});
   }

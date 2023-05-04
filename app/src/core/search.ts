@@ -1,12 +1,12 @@
-import MiniSearch, { SearchResult } from "minisearch";
-import { ellipsize } from "./utils";
-import { ChatManager } from ".";
-import { Chat, Message } from "./chat/types";
+import MiniSearch, {SearchResult} from 'minisearch';
+import {ellipsize} from './utils';
+import {ChatManager} from '.';
+import {Chat, Message} from './chat/types';
 
 export class Search {
   private index = new MiniSearch({
-    fields: ["value"],
-    storeFields: ["id", "value"],
+    fields: ['value'],
+    storeFields: ['id', 'value'],
   });
 
   constructor(private context: ChatManager) {}
@@ -17,10 +17,10 @@ export class Search {
       return;
     }
     const messages = chat.messages.serialize();
-    const contents = messages.map((m: Message) => m.content).join("\n\n");
+    const contents = messages.map((m: Message) => m.content).join('\n\n');
     const doc = {
       id,
-      value: chat.title ? chat.title + "\n\n" + contents : contents,
+      value: chat.title ? chat.title + '\n\n' + contents : contents,
     };
     if (!this.index.has(id)) {
       this.index.add(doc);
@@ -46,11 +46,11 @@ export class Search {
       return results;
     }
 
-    let searchResults = this.index.search(query, { fuzzy: 0.2 });
+    let searchResults = this.index.search(query, {fuzzy: 0.2});
     let output = this.processSearchResults(searchResults);
 
     if (!output.length) {
-      searchResults = this.index.search(query, { prefix: true });
+      searchResults = this.index.search(query, {prefix: true});
       output = this.processSearchResults(searchResults);
     }
 
@@ -66,9 +66,9 @@ export class Search {
         continue;
       }
 
-      chat = { ...chat };
+      chat = {...chat};
 
-      let description = chat.messages?.first?.content || "";
+      let description = chat.messages?.first?.content || '';
       description = ellipsize(description, 400);
 
       if (!chat.title) {

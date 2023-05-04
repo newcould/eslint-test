@@ -1,7 +1,7 @@
-import express from "express";
+import express from 'express';
 
-import RequestHandler from "./base";
-import ExpiryMap from "expiry-map";
+import RequestHandler from './base';
+import ExpiryMap from 'expiry-map';
 
 const cache = new ExpiryMap<string, any>(1000 * 60 * 60);
 
@@ -29,8 +29,8 @@ export default class LegacySyncRequestHandler extends RequestHandler {
     for (const chat of chats) {
       if (!deletedChatIDs.includes(chat.id)) {
         const chatMessages = messages
-          .filter((message) => message.chat_id === chat.id)
-          .map((m) => m.data);
+          .filter(message => message.chat_id === chat.id)
+          .map(m => m.data);
 
         response.push({
           id: chat.id,

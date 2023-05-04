@@ -1,18 +1,18 @@
-import express from "express";
-import RequestHandler from "./base";
-import { config } from "../config";
+import express from 'express';
+import RequestHandler from './base';
+import {config} from '../config';
 
 export default class SessionRequestHandler extends RequestHandler {
   async handler(req: express.Request, res: express.Response) {
     const request = req as any;
 
     const availableServiceNames = Object.keys(config.services || {}).filter(
-      (key) => {
+      key => {
         const serviceConfig = (config.services as any)?.[key];
         const apiKey = serviceConfig?.apiKey;
         const loginRequired = serviceConfig?.loginRequired ?? true;
         return apiKey && (!loginRequired || request.isAuthenticated());
-      }
+      },
     );
 
     if (request.oidc) {

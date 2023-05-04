@@ -1,6 +1,6 @@
-import { Option } from "./option";
-import type { OptionsManager } from ".";
-import { ReactNode } from "react";
+import {Option} from './option';
+import type {OptionsManager} from '.';
+import {ReactNode} from 'react';
 
 /**
  * @interface OptionGroup

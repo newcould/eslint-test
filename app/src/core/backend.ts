@@ -1,14 +1,14 @@
-import EventEmitter from "events";
-import * as Y from "yjs";
-import { encode, decode } from "@msgpack/msgpack";
-import { MessageTree } from "./chat/message-tree";
-import { Chat } from "./chat/types";
-import { AsyncLoop } from "./utils/async-loop";
-import { ChatManager } from ".";
-import { getRateLimitResetTimeFromResponse } from "./utils";
-import { importChat } from "./chat/chat-persistance";
+import EventEmitter from 'events';
+import * as Y from 'yjs';
+import {encode, decode} from '@msgpack/msgpack';
+import {MessageTree} from './chat/message-tree';
+import {Chat} from './chat/types';
+import {AsyncLoop} from './utils/async-loop';
+import {ChatManager} from '.';
+import {getRateLimitResetTimeFromResponse} from './utils';
+import {importChat} from './chat/chat-persistance';
 
-const endpoint = "/chatapi";
+const endpoint = '/chatapi';
 
 export let backend: {
   current?: Backend | null;
@@ -57,13 +57,13 @@ export class Backend extends EventEmitter {
       console.log(
         `Waiting another ${
           this.rateLimitedUntil - Date.now()
-        }ms to check session due to rate limiting.`
+        }ms to check session due to rate limiting.`,
       );
       return;
     }
 
     const wasAuthenticated = this.isAuthenticated;
-    const session = await this.get(endpoint + "/session");
+    const session = await this.get(endpoint + '/session');
 
     if (session?.authProvider) {
       (window as any).AUTH_PROVIDER = session.authProvider;
@@ -86,7 +86,7 @@ export class Backend extends EventEmitter {
     this.checkedSession = true;
 
     if (wasAuthenticated !== this.isAuthenticated) {
-      this.emit("authenticated", this.isAuthenticated);
+      this.emit('authenticated', this.isAuthenticated);
       this.lastFullSyncAt = 0;
     }
   }
@@ -100,14 +100,14 @@ export class Backend extends EventEmitter {
       console.log(
         `Waiting another ${
           this.rateLimitedUntil - Date.now()
-        }ms before syncing due to rate limiting.`
+        }ms before syncing due to rate limiting.`,
       );
       return;
     }
 
-    const encoding = await import("lib0/encoding");
-    const decoding = await import("lib0/decoding");
-    const syncProtocol = await import("y-protocols/sync");
+    const encoding = await import('lib0/encoding');
+    const decoding = await import('lib0/decoding');
+    const syncProtocol = await import('y-protocols/sync');
 
     const sinceLastFullSync = Date.now() - this.lastFullSyncAt;
 
@@ -118,10 +118,10 @@ export class Backend extends EventEmitter {
       const encoder = encoding.createEncoder();
       syncProtocol.writeUpdate(encoder, pendingYUpdate);
 
-      const response = await fetch(endpoint + "/y-sync", {
-        method: "POST",
+      const response = await fetch(endpoint + '/y-sync', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/octet-stream",
+          'Content-Type': 'application/octet-stream',
         },
         body: encoding.toUint8Array(encoder),
       });
@@ -144,10 +144,10 @@ export class Backend extends EventEmitter {
 
         const buffer = queue.shift()!;
 
-        const response = await fetch(endpoint + "/y-sync", {
-          method: "POST",
+        const response = await fetch(endpoint + '/y-sync', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/octet-stream",
+            'Content-Type': 'application/octet-stream',
           },
           body: buffer,
         });
@@ -175,7 +175,7 @@ export class Backend extends EventEmitter {
             decoder,
             encoder,
             this.context.doc.root,
-            "sync"
+            'sync',
           );
 
           if (encoding.length(encoder)) {
@@ -184,13 +184,13 @@ export class Backend extends EventEmitter {
         }
       }
 
-      this.context.emit("update");
+      this.context.emit('update');
     }
 
     if (!this.legacySync) {
       this.legacySync = true;
 
-      const chats = await this.get(endpoint + "/legacy-sync");
+      const chats = await this.get(endpoint + '/legacy-sync');
 
       this.context.doc.transact(() => {
         for (const chat of chats) {
@@ -213,7 +213,7 @@ export class Backend extends EventEmitter {
   }
 
   async signIn() {
-    window.location.href = endpoint + "/login";
+    window.location.href = endpoint + '/login';
   }
 
   get isAuthenticated() {
@@ -221,16 +221,16 @@ export class Backend extends EventEmitter {
   }
 
   async logout() {
-    window.location.href = endpoint + "/logout";
+    window.location.href = endpoint + '/logout';
   }
 
   async shareChat(chat: Chat): Promise<string | null> {
     try {
-      const { id } = await this.post(endpoint + "/share", {
+      const {id} = await this.post(endpoint + '/share', {
         ...chat,
         messages: chat.messages.serialize(),
       });
-      if (typeof id === "string") {
+      if (typeof id === 'string') {
         return id;
       }
     } catch (e) {
@@ -240,8 +240,8 @@ export class Backend extends EventEmitter {
   }
 
   async getSharedChat(id: string): Promise<Chat | null> {
-    const format = process.env.REACT_APP_SHARE_URL || endpoint + "/share/:id";
-    const url = format.replace(":id", id);
+    const format = process.env.REACT_APP_SHARE_URL || endpoint + '/share/:id';
+    const url = format.replace(':id', id);
     try {
       const chat = await this.get(url);
       if (chat?.messages?.length) {
@@ -259,7 +259,7 @@ export class Backend extends EventEmitter {
       return;
     }
 
-    return this.post(endpoint + "/delete", { id });
+    return this.post(endpoint + '/delete', {id});
   }
 
   async get(url: string) {
@@ -275,9 +275,9 @@ export class Backend extends EventEmitter {
 
   async post(url: string, data: any) {
     const response = await fetch(url, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     });

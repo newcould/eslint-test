@@ -1,4 +1,4 @@
-import { MessageTree } from "./message-tree";
+import {MessageTree} from './message-tree';
 
 export interface Parameters {
   temperature: number;
