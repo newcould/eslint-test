@@ -1,28 +1,26 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import storage from 'redux-persist/lib/storage';
-import { persistReducer, persistStore } from 'redux-persist';
-import messageReducer from './message';
-import uiReducer from './ui';
-import settingsUIReducer from './settings-ui';
-import sidebarReducer from './sidebar';
+import { configureStore } from "@reduxjs/toolkit";
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import storage from "redux-persist/lib/storage";
+import { persistReducer, persistStore } from "redux-persist";
+import messageReducer from "./message";
+import uiReducer from "./ui";
+import settingsUIReducer from "./settings-ui";
+import sidebarReducer from "./sidebar";
 
 const persistConfig = {
-  key: 'root',
+  key: "root",
   storage,
-}
+};
 
 const persistSidebarConfig = {
-  key: 'sidebar',
+  key: "sidebar",
   storage,
-}
+};
 
 const persistMessageConfig = {
-  key: 'message',
+  key: "message",
   storage,
-}
-
-
+};
 
 const store = configureStore({
   reducer: {
@@ -31,7 +29,7 @@ const store = configureStore({
     settingsUI: settingsUIReducer,
     sidebar: persistReducer(persistSidebarConfig, sidebarReducer),
   },
-})
+});
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

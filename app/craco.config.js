@@ -3,23 +3,21 @@ const webpack = require("webpack");
 const path = require("path");
 
 module.exports = {
-  plugins: [
-    cracoWasm(),
-  ],
+  plugins: [cracoWasm()],
   eslint: {
-    enable: false
+    enable: false,
   },
   babel: {
     plugins: [
       [
-        'formatjs',
+        "formatjs",
         {
           removeDefaultMessage: false,
-          idInterpolationPattern: '[sha512:contenthash:base64:6]',
-          ast: true
-        }
-      ]
-    ]
+          idInterpolationPattern: "[sha512:contenthash:base64:6]",
+          ast: true,
+        },
+      ],
+    ],
   },
   webpack: {
     configure: {
@@ -28,7 +26,7 @@ module.exports = {
           buffer: require.resolve("buffer"),
         },
         alias: {
-          '@ffmpeg/ffmpeg': path.resolve(__dirname, 'src/stub.js')
+          "@ffmpeg/ffmpeg": path.resolve(__dirname, "src/stub.js"),
         },
       },
       plugins: [
@@ -40,4 +38,4 @@ module.exports = {
       cache: false,
     },
   },
-}
+};

@@ -53,7 +53,7 @@ Then navigate to http://localhost:3000 to view the app.
 
 For convenience, you can store your API keys on your computer instead of entering them in the browser.
 
-*Warning:* Be very careful doing this if anyone else has access to your self-hosted version of the app. They will be able to use the app through your API key as well.
+_Warning:_ Be very careful doing this if anyone else has access to your self-hosted version of the app. They will be able to use the app through your API key as well.
 
 Create a file called `config.yaml` in your `data` folder with the following contents:
 
