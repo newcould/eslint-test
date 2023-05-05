@@ -33,10 +33,37 @@ export default function LandingPage(props: any) {
       <Container>
         <p>
           <FormattedMessage
-            defaultMessage={'Hello, how can I help you today?'}
+            defaultMessage={'Hello, what would you like to work on?'}
             description="A friendly message that appears at the start of new chat sessions"
           />
         </p>
+        <Button
+          size="md"
+          variant="light"
+          compact
+          radius={'md'}
+          onClick={onConnectButtonClick} // Replace this with set system prompt function
+        >
+          <FormattedMessage defaultMessage={'Morning Routine'} />
+        </Button>
+        <Button
+          size="md"
+          variant="light"
+          compact
+          radius={'md'}
+          onClick={onConnectButtonClick} // Replace this with set system prompt function
+        >
+          <FormattedMessage defaultMessage={'Night Routine'} />
+        </Button>
+        <Button
+          size="md"
+          variant="light"
+          radius={'md'}
+          compact
+          onClick={onConnectButtonClick} // Replace this with set system prompt function
+        >
+          <FormattedMessage defaultMessage={'Weekly Routine'} />
+        </Button>
         {!openAIApiKey && !isProxySupported() && (
           <Button
             size="xs"
